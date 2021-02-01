@@ -1,7 +1,5 @@
 # QuerriX
 
-This project was generated with [BàngáJS](https://bangajs.netlify.app/) v1.0.0.  
-
 ## Installation
 
 1. Install dependencies - `npm install`
@@ -17,9 +15,6 @@ This project was generated with [BàngáJS](https://bangajs.netlify.app/) v1.0.0
 
 2. Server should be running on http://localhost:2020/ by default
 
-## Code scaffolding
-
-Run `banga generate <type> <name>` to generate a new file types. Visit [here](https://bangajs.netlify.app/#banga-generate) for more info.
 
 ## Routes
 
