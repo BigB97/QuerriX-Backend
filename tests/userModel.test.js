@@ -2,9 +2,9 @@
 const User = require('../src/models/user.model');
 const { setupDB } = require('./testUtils');
 
-describe('User Model test', () => {
+describe('Model test', () => {
   // BEforeall, AfterEach, Afterall
-  setupDB();
+  setupDB(4040);
   // Test start
   // Sanity Check
   it('has a USER model ', async () => {
