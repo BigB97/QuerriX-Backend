@@ -1,25 +1,26 @@
-const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
-const { BCRYPT_SALT } = require("./../config")
-const Schema = mongoose.Schema;
+/* eslint-disable func-names */
+const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+// const { BCRYPT_SALT } = require('../config');
 
+const { Schema } = mongoose;
 
 const userSchema = new Schema(
   {
     name: {
       type: String,
       trim: true,
-      required: [true, "Name is required"],
+      // required: [true, "Name is required"],
     },
     email: {
       type: String,
       trim: true,
       unique: true,
-      required: [true, "Email is required"],
+      required: [true, 'Email is required'],
     },
     password: {
       type: String,
-      required: [true, "Password is required"]
+      required: [true, 'Password is required'],
     },
     image: {
       type: String,
@@ -27,8 +28,8 @@ const userSchema = new Schema(
     role: {
       type: String,
       trim: true,
-      enum: ["user", "admin"],
-      default: "user"
+      enum: ['user', 'admin'],
+      default: 'user',
     },
     isActive: {
       type: Boolean,
@@ -37,22 +38,20 @@ const userSchema = new Schema(
     isVerified: {
       type: Boolean,
       default: false,
-    }
+    },
   },
   {
-    timestamps: true
+    timestamps: true,
   }
 );
 
-userSchema.pre("save", async function (next) {
-  if (!this.isModified('password')) return next()
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
 
-  const hash = await bcrypt.hash(this.password, BCRYPT_SALT);
+  const hash = await bcrypt.hash(this.password, 10);
   this.password = hash;
 
   next();
 });
 
-
-
-module.exports = mongoose.model('users', userSchema)
+module.exports = mongoose.model('users', userSchema);

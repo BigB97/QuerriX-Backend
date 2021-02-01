@@ -1,5 +1,8 @@
-const User = require("./../models/user.model");
-const CustomError = require("./../utils/custom-error");
+/* eslint-disable class-methods-use-this */
+/* eslint-disable no-return-await */
+const User = require('../models/user.model');
+const CustomError = require('../utils/custom-error');
+
 class UserService {
   async create(data) {
     return await new User(data).save();
@@ -12,18 +15,18 @@ class UserService {
   async getOne(userId) {
     const user = await User.findOne(
       { _id: userId },
-      { password: 0, __v: 0 }
+      { password: 0, __v: 0 },
     );
-    if (!user) throw new CustomError("User does not exists");
+    if (!user) throw new CustomError('User does not exists');
 
-    return user
+    return user;
   }
 
   async update(userId, data) {
     const user = await User.findByIdAndUpdate(
       { _id: userId },
       { $set: data },
-      { new: true }
+      { new: true },
     );
 
     if (!user) throw new CustomError("User dosen't exist", 404);
@@ -33,8 +36,8 @@ class UserService {
 
   async delete(userId) {
     const user = await User.findOne({ _id: userId });
-    user.remove()
-    return user
+    user.remove();
+    return user;
   }
 }
 

@@ -5,5 +5,3 @@ node_modules
 src/config/env/prod.env.json
 
 # exclude files in uploads
-uploads/*
-!uploads/.gitkeep
