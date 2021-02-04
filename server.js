@@ -9,6 +9,7 @@ const { PORT } = process.env;
 
 // database url
 const { MONGODB_URI } = require('./src/config/index');
+console.log(MONGODB_URI)
 
 // Pre-route middlewares
 require('./src/middlewares/pre-route.middleware')(app);
