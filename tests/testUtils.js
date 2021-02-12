@@ -5,7 +5,6 @@ const app = require('express')();
 const mongoose = require('mongoose');
 
 const mongoUrl = 'mongodb://localhost/test';
-
 let server;
 const User = require('../src/models/user.model');
 
@@ -16,7 +15,6 @@ const options = {
   useFindAndModify: false,
 };
 
-// module.exports = DBManager;
 module.exports = {
   setupDB(PORTS) {
     // Connect to Mongoose
@@ -30,8 +28,9 @@ module.exports = {
     //   await User.deleteMany();
     // });
 
-    afterAll((done) => {
-      mongoose.connection.close();
+    afterAll(async (done) => {
+      await mongoose.connection.dropDatabase();
+      await mongoose.connection.close();
       server.close(done);
     });
   },
