@@ -1,22 +1,21 @@
 const nodemailer = require('nodemailer');
 const CustomError = require('../utils/custom-error');
-const { mailer, APP_NAME } = require('../config');
 
 class MailService {
   constructor() {
     this.transporter = nodemailer.createTransport({
-      host: mailer.HOST,
-      port: mailer.PORT,
-      secure: mailer.SECURE,
+      host: process.env.HOST,
+      port: process.env.PORT,
+      secure: process.env.SECURE,
       auth: {
-        user: mailer.USER,
-        pass: mailer.PASSWORD,
+        user: process.env.USER,
+        pass: process.env.PASSWORD,
       },
     });
   }
 
   async send(from, to, subject, content) {
-    from = from || `${APP_NAME} <no-reply${mailer.DOMAIN}>`;
+    from = from || `${process.env.APP_NAME} <no-reply${process.env.DOMAIN}>`;
     content = content || 'Hello world';
 
     if (!to) throw new CustomError('Recipient is required');

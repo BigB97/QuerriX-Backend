@@ -1,5 +1,7 @@
 FROM node:latest
-WORKDIR /app
-ADD .. /app
+WORKDIR /usr/src/app
+ADD package*.json ./
 RUN npm install
-CMD server.js
+ADD . /usr/src/app
+EXPOSE 3000
+CMD ["npm","start"]

@@ -13,7 +13,6 @@ describe('Model test', () => {
   // Test Creating User
   describe('Creating User', () => {
     const data = { email: 'jideola@gmail.com', password: 'Bolaji@2120' };
-
     it('User is receivind json data', async () => {
       const user = new User(data);
       expect(user.email).toBe(data.email);

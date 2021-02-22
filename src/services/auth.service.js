@@ -6,7 +6,6 @@ const crypto = require('crypto');
 const User = require('../models/user.model');
 const Token = require('../models/token.model');
 const CustomError = require('../utils/custom-error');
-const { JWT_SECRET, BCRYPT_SALT, url } = require('../config');
 
 class AuthService {
   async signup(data) {
@@ -14,7 +13,10 @@ class AuthService {
     if (user) throw new CustomError('Email already exists');
 
     user = new User(data);
-    const token = JWT.sign({ id: user._id, role: user.role }, 'JWT_SECRET');
+    const token = JWT.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET
+    );
     await user.save();
 
     const returnData = {
@@ -62,7 +64,10 @@ class AuthService {
     const isCorrect = await bcrypt.compare(data.password, user.password);
     if (!isCorrect) throw new CustomError('Incorrect password');
 
-    const hash = await bcrypt.hash(password, BCRYPT_SALT);
+    const hash = await bcrypt.hash(
+      data.password,
+      process.env.process.env.BCRYPT_SALT
+    );
 
     await User.updateOne(
       { _id: userId },
@@ -80,7 +85,7 @@ class AuthService {
     if (token) await token.deleteOne();
 
     const verifyToken = crypto.randomBytes(32).toString('hex');
-    const hash = await bcrypt.hash(verifyToken, BCRYPT_SALT);
+    const hash = await bcrypt.hash(verifyToken, process.env.BCRYPT_SALT);
 
     await new Token({
       userId: user._id,
@@ -88,7 +93,7 @@ class AuthService {
       createdAt: Date.now(),
     }).save();
 
-    const link = `${url.CLIENT_URL}/email-verification?uid=${user._id}&verifyToken=${verifyToken}`;
+    const link = `${proccess.env.CLIENT_URL}/email-verification?uid=${user._id}&verifyToken=${verifyToken}`;
 
     // send Mail
     return link;
@@ -126,7 +131,7 @@ class AuthService {
     if (token) await token.deleteOne();
 
     const resetToken = crypto.randomBytes(32).toString('hex');
-    const hash = await bcrypt.hash(resetToken, BCRYPT_SALT);
+    const hash = await bcrypt.hash(resetToken, process.env.BCRYPT_SALT);
 
     await new Token({
       userId: user._id,
@@ -134,7 +139,7 @@ class AuthService {
       createdAt: Date.now(),
     }).save();
 
-    const link = `${url.CLIENT_URL}/reset-password?uid=${user._id}&resetToken=${resetToken}`;
+    const link = `${proccess.env.CLIENT_}/reset-password?uid=${user._id}&resetToken=${resetToken}`;
 
     // send mail
     return link;
@@ -151,7 +156,7 @@ class AuthService {
     if (!isValid)
       throw new CustomError('Invalid or expired password reset token');
 
-    const hash = await bcrypt.hash(password, BCRYPT_SALT);
+    const hash = await bcrypt.hash(password, process.env.BCRYPT_SALT);
 
     await User.updateOne(
       { _id: userId },
