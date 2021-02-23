@@ -1,4 +1,5 @@
 FROM node:latest
+ENV PORT=3000
 WORKDIR /usr/src/app
 ADD package*.json ./
 RUN npm install -g npm@7.5.6
