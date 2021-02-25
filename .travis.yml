@@ -1,0 +1,22 @@
+sudo: required
+
+services:
+  - docker
+
+before_install:
+  - sudo docker build -f dockerfie.dev -t querrix_test .
+
+script:
+  - docker run querrix_test
+
+deploy:
+  provider: elasticbeanstalk
+  access_key_id: $ACCESS_KEY
+  secret_access_key:
+    secure: $SECRET_ACCESS_KEY
+  region: eu-west-2
+  app: QxDeploy
+  env: Qxdeploy-env
+  bucket_name: querri_x_s3_bucket_deploy
+    on:
+      branch: master
