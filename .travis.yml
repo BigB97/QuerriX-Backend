@@ -20,3 +20,4 @@ deploy:
   bucket_name: querri_x_s3_bucket_deploy
   on:
     branch: master
+  edge: true
