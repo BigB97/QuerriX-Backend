@@ -12,12 +12,12 @@ script:
 deploy:
   provider: elasticbeanstalk
   access_key_id:
-    secure: $ACCESS_KEY
+    secure: "AKIAXA76NSHN7HNZHEPZ"
   secret_access_key:
-    secure: $SECRET_ACCESS_KEY
+    secure: "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"
   region: 'eu-west-2'
-  app: 'QxDeploy'
-  env: 'Qxdeploy-env'
+  app: 'deployx'
+  env: 'Deployx-env'
   bucket_name: querri_x_s3_bucket_deploy
   on:
     branch: master
