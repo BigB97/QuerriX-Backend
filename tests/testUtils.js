@@ -4,9 +4,8 @@ const app = require('express')();
 /* Need to access the database to test like functionality */
 const mongoose = require('mongoose');
 
-const mongoUrl =
-  'mongotest_url=mongodb+srv://qxtest:x4uqbtfUC8lAngq9@cluster0.s5b65.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
-let server;
+const mongoUrl = 'mongodb+srv://qxtest:x4uqbtfUC8lAngq9@cluster0.s5b65.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
+// let server;
 const User = require('../src/models/user.model');
 
 const options = {

@@ -13,9 +13,7 @@ require('./src/middlewares/pre-route.middleware')(app);
 app.use('/api', require('./src/routes'));
 
 // Ping route for testing connection
-app.get('/ping', (req, res) =>
-  res.status(200).send("Hello world!, We're changing the world")
-);
+app.get('/ping', (req, res) => res.status(200).send("Hello world!, We're changing the world"));
 
 // Error middlewares
 require('./src/middlewares/error.middleware')(app);
@@ -24,7 +22,7 @@ app.listen(3000, async () => {
   // Initialize MongoDB
   MongoDB(MONGODB_URI);
   console.log(
-    `:::> Server listening on port ${3000} @ http://localhost:${3000}`
+    `:::> Server listening on port ${3000} @ http://localhost:${3000}`,
   );
 });
 
