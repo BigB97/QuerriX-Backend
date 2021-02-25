@@ -18,5 +18,5 @@ deploy:
   app: QxDeploy
   env: Qxdeploy-env
   bucket_name: querri_x_s3_bucket_deploy
-    on:
-      branch: master
+  on:
+    branch: master
