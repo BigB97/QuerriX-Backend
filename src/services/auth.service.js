@@ -6,6 +6,7 @@ const crypto = require('crypto');
 const User = require('../models/user.model');
 const Token = require('../models/token.model');
 const CustomError = require('../utils/custom-error');
+// const { JWT_SECRET } = process.env;
 
 class AuthService {
   async signup(data) {
@@ -13,10 +14,7 @@ class AuthService {
     if (user) throw new CustomError('Email already exists');
 
     user = new User(data);
-    const token = JWT.sign(
-      { id: user._id, role: user.role },
-      process.env.JWT_SECRET,
-    );
+    const token = JWT.sign({ id: user._id, role: user.role }, 'JWT_SECRET');
     await user.save();
 
     const returnData = {
@@ -43,7 +41,7 @@ class AuthService {
     const token = await JWT.sign(
       { id: user._id, role: user.role },
       'JWT_SECRET',
-      { expiresIn: 60 * 60 },
+      { expiresIn: 60 * 60 }
     );
 
     const returnData = {
@@ -66,13 +64,13 @@ class AuthService {
 
     const hash = await bcrypt.hash(
       data.password,
-      process.env.process.env.BCRYPT_SALT,
+      process.env.process.env.BCRYPT_SALT
     );
 
     await User.updateOne(
       { _id: userId },
       { $set: { password: hash } },
-      { new: true },
+      { new: true }
     );
   }
 
@@ -107,15 +105,17 @@ class AuthService {
     if (user.isVerified) throw new CustomError('Email is already verified');
 
     const VToken = await Token.findOne({ userId });
-    if (!VToken) throw new CustomError('Invalid or expired password reset token');
+    if (!VToken)
+      throw new CustomError('Invalid or expired password reset token');
 
     const isValid = await bcrypt.compare(verifyToken, VToken.token);
-    if (!isValid) throw new CustomError('Invalid or expired password reset token');
+    if (!isValid)
+      throw new CustomError('Invalid or expired password reset token');
 
     await User.updateOne(
       { _id: userId },
       { $set: { isVerified: true } },
-      { new: true },
+      { new: true }
     );
 
     await VToken.deleteOne();
@@ -147,17 +147,19 @@ class AuthService {
     const { userId, resetToken, password } = data;
 
     const RToken = await Token.findOne({ userId });
-    if (!RToken) throw new CustomError('Invalid or expired password reset token');
+    if (!RToken)
+      throw new CustomError('Invalid or expired password reset token');
 
     const isValid = await bcrypt.compare(resetToken, RToken.token);
-    if (!isValid) throw new CustomError('Invalid or expired password reset token');
+    if (!isValid)
+      throw new CustomError('Invalid or expired password reset token');
 
     const hash = await bcrypt.hash(password, process.env.BCRYPT_SALT);
 
     await User.updateOne(
       { _id: userId },
       { $set: { password: hash } },
-      { new: true },
+      { new: true }
     );
 
     await RToken.deleteOne();
