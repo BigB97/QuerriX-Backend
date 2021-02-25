@@ -12,8 +12,7 @@ script:
 deploy:
   provider: elasticbeanstalk
   access_key_id: 'AKIAXA76NSHN7HNZHEPZ'
-  secret_access_key:
-    secure: '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'
+  secret_access_key: 'JSdfrKV+bkQxY6xNhpKFp2EikckS/TmMW9MCWR8p'
   region: 'eu-west-2'
   app: 'deployx'
   env: 'Deployx-env'
