@@ -4,7 +4,7 @@ services:
   - docker
 
 before_install:
-  - sudo docker build -f dockerfie.dev -t querrix_test .
+  - sudo docker build -f dockerfile.dev -t querrix_test .
 
 script:
   - docker run querrix_test
