@@ -16,7 +16,7 @@ deploy:
   region: 'eu-west-2'
   app: 'deployx'
   env: 'Deployx-env'
-  bucket_name: 'querri_x_s3_bucket_deploy'
+  bucket_name: 'querrix-s3-bucket-2021'
   on:
     branch: master
   # edge: true
