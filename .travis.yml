@@ -16,7 +16,8 @@ deploy:
   region: 'eu-west-2'
   app: 'deployx'
   env: 'Deployx-env'
-  bucket_name: 'querrix-s3-bucket-2021'
+  bucket_name: 'elasticbeanstalk-eu-west-2-483180515803'
+  bucket_path: ""
   on:
     branch: master
   # edge: true

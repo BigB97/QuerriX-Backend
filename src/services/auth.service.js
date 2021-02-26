@@ -6,7 +6,9 @@ const crypto = require('crypto');
 const User = require('../models/user.model');
 const Token = require('../models/token.model');
 const CustomError = require('../utils/custom-error');
-// const { JWT_SECRET } = process.env;
+
+const { JWT_SECRET } = process.env;
+// console.log(JWT_SECRET);
 
 class AuthService {
   async signup(data) {
@@ -14,7 +16,7 @@ class AuthService {
     if (user) throw new CustomError('Email already exists');
 
     user = new User(data);
-    const token = JWT.sign({ id: user._id, role: user.role }, 'JWT_SECRET');
+    const token = JWT.sign({ id: user._id, role: user.role }, JWT_SECRET);
     await user.save();
 
     const returnData = {

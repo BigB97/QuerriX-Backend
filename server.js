@@ -5,7 +5,8 @@ const app = require('express')();
 // Mongoose Database Setting
 const MongoDB = require('./src/config/mongo-db.config');
 
-const { PORT, MONGODB_URI } = process.env;
+const { PORT, MONGODB_URI, JWT_SECRET } = process.env;
+console.log(JWT_SECRET);
 // Pre-route middlewares
 require('./src/middlewares/pre-route.middleware')(app);
 
@@ -13,7 +14,7 @@ require('./src/middlewares/pre-route.middleware')(app);
 app.use('/api', require('./src/routes'));
 
 // Ping route for testing connection
-app.get('/ping', (req, res) => res.status(200).send("Hello world!, We're changing the world"));
+app.get('/', (req, res) => res.status(200).send("Hello world!, We're changing the world"));
 
 // Error middlewares
 require('./src/middlewares/error.middleware')(app);
@@ -22,7 +23,7 @@ app.listen(3000, async () => {
   // Initialize MongoDB
   MongoDB(MONGODB_URI);
   console.log(
-    `:::> Server listening on port ${3000} @ http://localhost:${3000}`,
+    `:::> Server listening on port ${3000} ${JWT_SECRET} @ http://localhost:${3000}`,
   );
 });
 
