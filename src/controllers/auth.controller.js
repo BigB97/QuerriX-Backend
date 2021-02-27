@@ -30,7 +30,9 @@ class AuthContoller {
 
   async RequestPasswordReset(req, res) {
     const result = await AuthServ.RequestPasswordReset(req.query.email);
-    res.status(200).json(response('Password reset link sent', result));
+    res
+      .status(200)
+      .json(response('Password reset link sent to your mail', result));
   }
 
   async resetPassword(req, res) {

@@ -27,6 +27,11 @@ class UserContoller {
     const result = await UserServ.delete(req.params.userId);
     res.status(200).send(response('User deleted', result));
   }
+
+  async userPersona(req, res) {
+    const result = await UserServ.userPersona(req.body);
+    res.status(200).send(response('Persona Created', result));
+  }
 }
 
 module.exports = new UserContoller();

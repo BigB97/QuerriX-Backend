@@ -1,6 +1,7 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-return-await */
 const User = require('../models/user.model');
+const Persona = require('../models/userPersona');
 const CustomError = require('../utils/custom-error');
 
 class UserService {
@@ -35,6 +36,12 @@ class UserService {
     const user = await User.findOne({ _id: userId });
     user.remove();
     return user;
+  }
+
+  async userPersona(data) {
+    const persona = new Persona(data);
+    await persona.save();
+    return persona;
   }
 }
 
