@@ -9,7 +9,7 @@ const Token = require('../models/token.model');
 const CustomError = require('../utils/custom-error');
 const sendEmail = require('./mail.service');
 
-const { JWT_SECRET, BCRYPT_SALT, CLIENT_URL } = process.env;
+// const { JWT_SECRET, BCRYPT_SALT, CLIENT_URL } = process.env;
 // const tokenModel = require('../models/token.model');
 
 class AuthService {
