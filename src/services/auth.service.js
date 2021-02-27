@@ -18,7 +18,7 @@ class AuthService {
     if (user) throw new CustomError('Email already exists');
 
     user = new User(data);
-    const token = JWT.sign({ id: user._id, role: user.role }, 'JWT_SECRET');
+    const token = JWT.sign({ id: user._id, role: user.role }, JWT_SECRET);
     await user.save();
 
     const returnData = {
@@ -44,7 +44,7 @@ class AuthService {
 
     const token = await JWT.sign(
       { id: user._id, role: user.role },
-      'JWT_SECRET',
+      JWT_SECRET,
       { expiresIn: 60 * 60 }
     );
 
