@@ -23,16 +23,12 @@ const sendEmail = async (to, subject, text) => {
     text,
   };
 
-  let error;
-  let success;
   // Step 4
   transporter.sendMail(mailOptions, (err, data) => {
     if (err) {
       console.log('Error', err);
-      error = err;
     }
     console.log('Sucess', data);
-    success = data;
   });
 };
 

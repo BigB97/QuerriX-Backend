@@ -11,14 +11,13 @@ const sendEmail = require('./mail.service');
 
 // const { JWT_SECRET, BCRYPT_SALT, CLIENT_URL } = process.env;
 // const tokenModel = require('../models/token.model');
-
 class AuthService {
   async signup(data) {
     let user = await User.findOne({ email: data.email });
     if (user) throw new CustomError('Email already exists');
 
     user = new User(data);
-    const token = JWT.sign({ id: user._id, role: user.role }, JWT_SECRET);
+    const token = JWT.sign({ id: user._id, role: user.role }, 'JWT_SECRET');
     await user.save();
 
     const returnData = {
@@ -44,7 +43,7 @@ class AuthService {
 
     const token = await JWT.sign(
       { id: user._id, role: user.role },
-      JWT_SECRET,
+      'JWT_SECRET',
       { expiresIn: 60 * 60 }
     );
 
@@ -66,7 +65,7 @@ class AuthService {
     const isCorrect = await bcrypt.compare(data.password, user.password);
     if (!isCorrect) throw new CustomError('Incorrect password');
 
-    const hash = await bcrypt.hash(data.password, BCRYPT_SALT);
+    const hash = await bcrypt.hash(data.password, 10);
 
     await User.updateOne(
       { _id: userId },
@@ -84,7 +83,7 @@ class AuthService {
     if (token) await token.deleteOne();
 
     const verifyToken = crypto.randomBytes(32).toString('hex');
-    const hash = await bcrypt.hash(verifyToken, BCRYPT_SALT);
+    const hash = await bcrypt.hash(verifyToken, 10);
 
     await new Token({
       userId: user._id,
@@ -140,7 +139,6 @@ class AuthService {
     const link = `localhost:3000/api/auth/reset-password?userId=${user._id}&resetToken=${resetToken}`;
     // send mail
     const result = await sendEmail(email, 'Reset Password', link);
-    // console.log(result);
     return result;
   }
 
@@ -162,5 +160,4 @@ class AuthService {
     await RToken.deleteOne();
   }
 }
-
 module.exports = new AuthService();
