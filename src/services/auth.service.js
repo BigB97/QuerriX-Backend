@@ -138,7 +138,7 @@ class AuthService {
 
     const link = `localhost:3000/api/auth/reset-password?userId=${user._id}&resetToken=${resetToken}`;
     // send mail
-    const result = await sendEmail(email, 'Reset Password', link);
+    const result = await send\Email(email, 'Reset Password', link);
     return result;
   }
 
