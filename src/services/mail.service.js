@@ -1,33 +1,39 @@
 const nodemailer = require('nodemailer');
+const mailGun = require('nodemailer-mailgun-transport');
 const CustomError = require('../utils/custom-error');
 
-class MailService {
-  constructor() {
-    this.transporter = nodemailer.createTransport({
-      host: process.env.HOST,
-      port: process.env.PORT,
-      secure: process.env.SECURE,
-      auth: {
-        user: process.env.USER,
-        pass: process.env.PASSWORD,
-      },
-    });
-  }
+// EmailService
+const sendEmail = async (to, subject, text) => {
+  // Step 1
+  const auth = {
+    auth: {
+      api_key: 'key-ee3f01adb03d410e27afe80cfd8e2996',
+      domain: 'sandbox2f108a1138d14e0196d612b9de0bbc5d.mailgun.org',
+    },
+  };
 
-  async send(from, to, subject, content) {
-    from = from || `${process.env.APP_NAME} <no-reply${process.env.DOMAIN}>`;
-    content = content || 'Hello world';
+  // Step 2
+  const transporter = nodemailer.createTransport(mailGun(auth));
 
-    if (!to) throw new CustomError('Recipient is required');
-    if (!subject) throw new CustomError('Subject is required');
+  // Step 3
+  const mailOptions = {
+    from: '"Querrix" <youremail@yourdomain.com>', // TODO: email sender
+    to: Array.isArray(to) ? to.join() : to, // TODO: email receiver
+    subject,
+    text,
+  };
 
-    const sent = await this.transporter.sendMail({
-      from,
-      to: Array.isArray(to) ? to.join() : to,
-      subject,
-      text: content,
-    });
-  }
-}
+  let error;
+  let success;
+  // Step 4
+  transporter.sendMail(mailOptions, (err, data) => {
+    if (err) {
+      console.log('Error', err);
+      error = err;
+    }
+    console.log('Sucess', data);
+    success = data;
+  });
+};
 
-module.exports = MailService;
+module.exports = sendEmail;
