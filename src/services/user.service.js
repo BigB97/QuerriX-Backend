@@ -38,8 +38,20 @@ class UserService {
     return user;
   }
 
-  async userPersona(data) {
-    const persona = new Persona(data);
+  async userPersona(users, data) {
+    const persona = new Persona({
+      userId: users._id,
+      firstname: data.firstname,
+      lastname: data.lastname,
+      gender: data.gender,
+      profile_type: data.profile_type,
+      how_about: data.how_about,
+      reason: data.reason,
+      uses: data.uses,
+      industry: data.industry,
+      industry_size: data.industry_size,
+      role: data.role,
+    });
     await persona.save();
     return persona;
   }

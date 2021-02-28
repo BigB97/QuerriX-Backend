@@ -29,7 +29,8 @@ class UserContoller {
   }
 
   async userPersona(req, res) {
-    const result = await UserServ.userPersona(req.body);
+    const { user } = req;
+    const result = await UserServ.userPersona(user, req.body);
     res.status(200).send(response('Persona Created', result));
   }
 }
