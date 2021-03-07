@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-const AuthService = require('../src/services/auth.service');
+const AuthService = require('../services/auth.service');
 const { setupDB } = require('./testUtils');
 
 describe('Auth test, Creating User', () => {

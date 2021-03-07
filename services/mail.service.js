@@ -7,8 +7,8 @@ const sendEmail = async (to, subject, text) => {
   // Step 1
   const auth = {
     auth: {
-      api_key: 'key-ee3f01adb03d410e27afe80cfd8e2996',
-      domain: 'sandbox2f108a1138d14e0196d612b9de0bbc5d.mailgun.org',
+      api_key: process.env.MAILER_KEY,
+      domain: process.env.MAILER_DOMAIN,
     },
   };
 

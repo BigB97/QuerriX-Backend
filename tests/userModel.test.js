@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-const User = require('../src/models/user.model');
+const User = require('../models/user.model');
 const { setupDB } = require('./testUtils');
 
 describe('Model test', () => {
