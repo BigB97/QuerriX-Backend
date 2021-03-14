@@ -42,6 +42,7 @@ class AuthService {
     if (!isValid) throw new CustomError('Invalid or expired sign up link');
     const hash = await bcrypt.hash(password, 10);
 
+
     const user = await User.findByIdAndUpdate(
       { _id: userId },
       phone,
@@ -80,7 +81,9 @@ class AuthService {
 
     const token = await JWT.sign(
       { id: user._id, role: user.role },
+
       `${process.env.JWT_SECRET}`,
+
       { expiresIn: 60 * 60 }
     );
 
@@ -103,7 +106,6 @@ class AuthService {
     if (!isCorrect) throw new CustomError('Incorrect password');
 
     const hash = await bcrypt.hash(data.password, 10);
-
     await User.updateOne(
       { _id: userId },
       { $set: { password: hash } },
@@ -121,6 +123,7 @@ class AuthService {
 
     const verifyToken = crypto.randomBytes(32).toString('hex');
     const hash = await bcrypt.hash(verifyToken, 10);
+
 
     await new Token({
       userId: user._id,
