@@ -2,8 +2,6 @@ const JWT = require('jsonwebtoken');
 const User = require('../models/user.model');
 const CustomError = require('../utils/custom-error');
 
-const { JWT_SECRET } = process.env;
-
 /**
  * If no role is passed the default role is user
  *
@@ -18,7 +16,7 @@ function auth(roles = []) {
     }
 
     const token = req.headers.authorization.split(' ')[1];
-    const decoded = JWT.verify(token, 'JWT_SECRET');
+    const decoded = JWT.verify(token, `${process.env.JWT_SECRET}`);
 
     const user = await User.findOne({ _id: decoded.id });
     if (!user) {

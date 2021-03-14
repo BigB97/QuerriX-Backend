@@ -13,9 +13,15 @@ const userSchema = new Schema(
       unique: true,
       required: [true, 'Email is required'],
     },
+    fullname: {
+      type: String,
+      trim: true,
+    },
+    phone: {
+      type: Number,
+    },
     password: {
       type: String,
-      required: [true, 'Password is required'],
     },
     role: {
       type: String,
@@ -36,14 +42,5 @@ const userSchema = new Schema(
     timestamps: true,
   },
 );
-
-userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
-
-  const hash = await bcrypt.hash(this.password, 10);
-  this.password = hash;
-
-  next();
-});
 
 module.exports = mongoose.model('users', userSchema);
