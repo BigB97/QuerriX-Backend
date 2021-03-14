@@ -3,6 +3,13 @@ const AuthServ = require('../services/auth.service');
 const response = require('../utils/response');
 
 class AuthContoller {
+  async RequestSignupLink(req, res) {
+    const result = await AuthServ.RequestSignupLink(req.body.email);
+    res
+      .status(200)
+      .json(response('A link has been sent to your email', result));
+  }
+
   async signup(req, res) {
     const result = await AuthServ.signup(req.body);
     res.status(201).json(response('User created', result));
