@@ -1,7 +1,12 @@
 /* eslint-disable no-undef */
 // const AuthService = require('../services/auth.service');
 // const { setupDB } = require('./testUtils');
+const User = require('../models/user.model');
 
+  // Sanity Check
+  it('has a USER model ', async () => {
+    expect(User).toBeDefined();
+  });
 // describe('Auth test, Creating User', () => {
 //   // BEforeall, AfterEach, Afterall
 //   setupDB(3030);
