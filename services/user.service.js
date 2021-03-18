@@ -39,6 +39,7 @@ class UserService {
   }
 
   async userPersona(users, data) {
+console.log(users,data)
     const persona = await Persona.create({
       userId: users._id,
       firstname: data.firstname,
