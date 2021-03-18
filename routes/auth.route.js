@@ -9,5 +9,4 @@ router.post('/request-email-verification', AuthCtrl.RequestEmailVerification);
 router.post('/verify-email', AuthCtrl.VerifyEmail);
 router.post('/request-password-reset', AuthCtrl.RequestPasswordReset);
 router.post('/reset-password', AuthCtrl.resetPassword);
-
 module.exports = router;
