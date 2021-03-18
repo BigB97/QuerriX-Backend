@@ -36,7 +36,9 @@ class AuthService {
   }
 
   async signup(datas) {
-    const { userId, signToken, phone, fullname, password } = datas;
+    const {
+      userId, signToken, phone, fullname, password,
+    } = datas;
     const RToken = await Token.findOne({ userId });
     if (!RToken) throw new CustomError('Invalid or expired sign up link');
     const isValid = await bcrypt.compare(signToken, RToken.token);
@@ -53,7 +55,7 @@ class AuthService {
           isVerified: true,
         },
       },
-      { new: true }
+      { new: true },
     );
 
     // Delete Registration Token
@@ -68,13 +70,13 @@ class AuthService {
       (err, data) => {
         if (err) return err;
         return data;
-      }
+      },
     );
 
     // Create Authentication Token
     const token = await JWT.sign(
       { id: user._id, role: user.role },
-      `${process.env.JWT_SECRET}`
+      `${process.env.JWT_SECRET}`,
     );
     // Resturn User data and Auth Token
     const returnData = {
@@ -105,7 +107,7 @@ class AuthService {
 
       `${process.env.JWT_SECRET}`,
 
-      { expiresIn: 60 * 60 }
+      { expiresIn: 60 * 60 },
     );
 
     const returnData = {
@@ -130,57 +132,8 @@ class AuthService {
     await User.updateOne(
       { _id: userId },
       { $set: { password: hash } },
-      { new: true }
+      { new: true },
     );
-  }
-
-  async RequestEmailVerification(email) {
-    const user = await User.findOne({ email });
-    if (!user) throw new CustomError('Email does not exist');
-    if (user.isVerified) throw new CustomError('Email is already verified');
-
-    const token = await Token.findOne({ userId: user._id });
-    if (token) await token.deleteOne();
-
-    const verifyToken = crypto.randomBytes(32).toString('hex');
-    const hash = await bcrypt.hash(verifyToken, 10);
-
-    await new Token({
-      userId: user._id,
-      token: hash,
-      createdAt: Date.now(),
-    }).save();
-
-    const link = `${process.env.CLIENT_URL}/email-verification?uid=${user._id}&verifyToken=${verifyToken}`;
-
-    // send Mail
-    return link;
-  }
-
-  async VerifyEmail(data) {
-    const { userId, verifyToken } = data;
-
-    const user = await User.findOne({ _id: userId });
-    if (!user) throw new CustomError('User does not exist');
-    if (user.isVerified) throw new CustomError('Email is already verified');
-
-    const VToken = await Token.findOne({ userId });
-    if (!VToken) {
-      throw new CustomError('Invalid or expired password reset token');
-    }
-
-    const isValid = await bcrypt.compare(verifyToken, VToken.token);
-    if (!isValid) {
-      throw new CustomError('Invalid or expired password reset token');
-    }
-
-    await User.updateOne(
-      { _id: userId },
-      { $set: { isVerified: true } },
-      { new: true }
-    );
-
-    await VToken.deleteOne();
   }
 
   async RequestPasswordReset(email) {
@@ -200,8 +153,10 @@ class AuthService {
 
     const link = `${process.env.BASE_URL}/api/auth/reset-password?userId=${user._id}&resetToken=${resetToken}`;
     // send mail
-    const result = await sendEmail(email, 'Reset Password', link);
-    return result;
+    await sendEmail(email, 'Reset Password', 'reset', { link }, (err, data) => {
+      if (err) return err;
+      return data;
+    });
   }
 
   async resetPassword(data) {
@@ -218,7 +173,7 @@ class AuthService {
     await User.updateOne(
       { _id: userId },
       { $set: { password: hash } },
-      { new: true }
+      { new: true },
     );
 
     await RToken.deleteOne();
