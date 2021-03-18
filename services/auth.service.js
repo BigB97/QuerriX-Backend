@@ -27,20 +27,14 @@ class AuthService {
     const link = `${process.env.BASE_URL}/api/auth/signup?userId=${user._id}&signToken=${signToken}`;
     console.log(link);
     // send mail
-    await sendEmail(
-      email,
-      'Signup link',
-      `<h3>Hi, Welcome your registration link is ready,
-      please click <a href="${link}">CONTINUE</a> to finish registration</h3>`,
-      (err, data) => {
-        if (err) return err;
-        return data;
-      }
-    );
+    await sendEmail(email, 'Signup link', 'signup', { link }, (err, data) => {
+      if (err) return err;
+      return data;
+    });
   }
 
-  async signup(data) {
-    const { userId, signToken, phone, fullname, password } = data;
+  async signup(datas) {
+    const { userId, signToken, phone, fullname, password } = datas;
     const RToken = await Token.findOne({ userId });
     if (!RToken) throw new CustomError('Invalid or expired sign up link');
     const isValid = await bcrypt.compare(signToken, RToken.token);
@@ -60,15 +54,28 @@ class AuthService {
       },
       { new: true }
     );
-    console.log('user', user);
 
+    // Delete Registration Token
     await RToken.deleteOne();
 
+    // Send Welcome Mail
+    await sendEmail(
+      user.email,
+      'Welcome',
+      'welcome',
+      { name: user.fullname },
+      (err, data) => {
+        if (err) return err;
+        return data;
+      }
+    );
+
+    // Create Authentication Token
     const token = await JWT.sign(
       { id: user._id, role: user.role },
       `${process.env.JWT_SECRET}`
     );
-
+    // Resturn User data and Auth Token
     const returnData = {
       uid: user._id,
       fullname: user.fullname,
