@@ -162,16 +162,16 @@ class AuthService {
 
   async resetPassword(data) {
     const { userId, resetToken, password } = data;
+
     const RToken = await Token.findOne({ userId });
-    if (!RToken) {
-      throw new CustomError('Invalid or expired password reset token');
-    }
+    if (!RToken) throw new CustomError('Invalid or expired password reset token');
     const isValid = await bcrypt.compare(resetToken, RToken.token);
+
     if (!isValid) {
       throw new CustomError('Invalid or expired password reset token');
     }
     const hash = await bcrypt.hash(password, 10);
-    await User.updateOne(
+    await User.findByIdAndUpdate(
       { _id: userId },
       { $set: { password: hash } },
       { new: true },

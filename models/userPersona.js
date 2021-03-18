@@ -55,6 +55,16 @@ const personaSchema = new Schema(
       trim: true,
       required: [true, 'Industry size is required'],
     },
+    collected_feedback: {
+      type: String,
+      trim: true,
+      required: [true, 'have you collected feedback size is required'],
+    },
+    collected_feedback_platform: {
+      type: String,
+      trim: true,
+      required: [true, 'platform used for collecting feedback is required'],
+    },
     role: {
       type: String,
       trim: true,
@@ -66,7 +76,7 @@ const personaSchema = new Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 module.exports = mongoose.model('persona', personaSchema);

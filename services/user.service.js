@@ -51,6 +51,8 @@ class UserService {
       industry: data.industry,
       industry_size: data.industry_size,
       role: data.role,
+      collected_feedback: data.collected_feedback,
+      collected_feedback_platform: data.collected_feedback_platform,
     });
     await persona.save();
     return persona;
