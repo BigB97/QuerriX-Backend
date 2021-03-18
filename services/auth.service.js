@@ -2,7 +2,7 @@
 /* eslint-disable class-methods-use-this */
 require('dotenv').config();
 const JWT = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const User = require('../models/user.model');
 const Token = require('../models/token.model');
@@ -26,12 +26,18 @@ class AuthService {
     }).save();
 
     const link = `${process.env.BASE_URL}/api/auth/signup?userId=${user._id}&signToken=${signToken}`;
+    console.log(link);
     // send mail
-    await sendEmail(email, 'Signup link', 'signup', {
-      link,
-      hello: 'Heloooooooooooo',
-    });
-    return 'Email is sucessfully sent';
+    await sendEmail(
+      email,
+      'Signup link',
+      `<h3>Hi, Welcome your registration link is ready,
+      please click <a href="${link}">CONTINUE</a> to finish registration</h3>`,
+      (err, data) => {
+        if (err) return err;
+        return data;
+      }
+    );
   }
 
   async signup(data) {
@@ -39,28 +45,38 @@ class AuthService {
     const RToken = await Token.findOne({ userId });
     if (!RToken) throw new CustomError('Invalid or expired sign up link');
     const isValid = await bcrypt.compare(signToken, RToken.token);
+
+    console.log('isValid', isValid);
     if (!isValid) throw new CustomError('Invalid or expired sign up link');
     const hash = await bcrypt.hash(password, 10);
 
-
     const user = await User.findByIdAndUpdate(
       { _id: userId },
-      phone,
-      fullname,
-      { $set: { password: hash } },
+      {
+        $set: {
+          password: hash,
+          phone,
+          fullname,
+          isVerified: true,
+        },
+      },
       { new: true }
     );
+    console.log('user', user);
 
     await RToken.deleteOne();
 
-    const token = JWT.sign(
+    const token = await JWT.sign(
+
       { id: user._id, role: user.role },
       `${process.env.JWT_SECRET}`
     );
 
     const returnData = {
       uid: user._id,
+      fullname: user.fullname,
       email: user.email,
+      phone: user.phone,
       role: user.role,
       token,
     };
@@ -123,7 +139,6 @@ class AuthService {
 
     const verifyToken = crypto.randomBytes(32).toString('hex');
     const hash = await bcrypt.hash(verifyToken, 10);
-
 
     await new Token({
       userId: user._id,

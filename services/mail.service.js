@@ -6,7 +6,8 @@ const path = require('path');
 const CustomError = require('../utils/custom-error');
 
 // EmailService
-const sendEmail = async (to, subject, temps, tempVar) => {
+
+const sendEmail = async (to, subject, html) => {
   // Step 1
   const auth = {
     auth: {
@@ -36,8 +37,7 @@ const sendEmail = async (to, subject, temps, tempVar) => {
     from: '"Querrix" <youremail@yourdomain.com>', // TODO: email sender
     to: Array.isArray(to) ? to.join() : to, // TODO: email receiver
     subject,
-    template: temps,
-    'h:X-Mailgun-Variables': JSON.stringify(tempVar),
+    html,
   };
 
   // Step 4
