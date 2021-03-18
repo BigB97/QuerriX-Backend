@@ -76,7 +76,7 @@ const personaSchema = new Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 module.exports = mongoose.model('persona', personaSchema);
