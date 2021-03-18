@@ -39,7 +39,7 @@ class UserService {
   }
 
   async userPersona(users, data) {
-    const persona = new Persona({
+    const persona = await Persona.create({
       userId: users._id,
       firstname: data.firstname,
       lastname: data.lastname,
@@ -54,7 +54,6 @@ class UserService {
       collected_feedback: data.collected_feedback,
       collected_feedback_platform: data.collected_feedback_platform,
     });
-    await persona.save();
     return persona;
   }
 }
