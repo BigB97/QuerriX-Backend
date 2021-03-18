@@ -6,6 +6,7 @@ const path = require('path');
 const CustomError = require('../utils/custom-error');
 
 // EmailService
+
 const sendEmail = async (to, subject, temps, vars) => {
   // Step 1
   const auth = {
