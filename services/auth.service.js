@@ -24,6 +24,7 @@ class AuthService {
       token: hash,
       createdAt: Date.now(),
     }).save();
+
     const link = `${process.env.BASE_URL}/api/auth/signup?userId=${user._id}&signToken=${signToken}`;
     console.log(link);
     // send mail
@@ -44,6 +45,7 @@ class AuthService {
     const RToken = await Token.findOne({ userId });
     if (!RToken) throw new CustomError('Invalid or expired sign up link');
     const isValid = await bcrypt.compare(signToken, RToken.token);
+
     console.log('isValid', isValid);
     if (!isValid) throw new CustomError('Invalid or expired sign up link');
     const hash = await bcrypt.hash(password, 10);
@@ -65,6 +67,7 @@ class AuthService {
     await RToken.deleteOne();
 
     const token = await JWT.sign(
+
       { id: user._id, role: user.role },
       `${process.env.JWT_SECRET}`
     );
