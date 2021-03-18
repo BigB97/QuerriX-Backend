@@ -28,6 +28,7 @@ const sendEmail = async (to, subject, temps, vars) => {
     extName: '.hbs',
   };
   transporter.use('compile', hbs(options));
+
   // Step 3
   const mailOptions = {
     from: '"Querrix" <youremail@yourdomain.com>', // TODO: email sender
@@ -41,6 +42,7 @@ const sendEmail = async (to, subject, temps, vars) => {
   transporter.sendMail(mailOptions, (err, data) => {
     if (err) {
       console.log('Error', err);
+      throw new CustomError('Email Error', err);
     }
     console.log('Sucess', data);
   });
