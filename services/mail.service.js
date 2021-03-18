@@ -7,7 +7,7 @@ const CustomError = require('../utils/custom-error');
 
 // EmailService
 
-const sendEmail = async (to, subject, html) => {
+const sendEmail = async (to, subject, temps, vars) => {
   // Step 1
   const auth = {
     auth: {
@@ -19,25 +19,24 @@ const sendEmail = async (to, subject, html) => {
   // Step 2
   // Nodemailer transport with mailgun ass smtp
   const transporter = nodemailer.createTransport(mailGun(auth));
-  // Options for template email
   const options = {
     viewEngine: {
-      extName: '.handlebars', // handlebars extension
+      extName: '.hbs', // handlebars extension
       partialsDir: path.resolve(__dirname, 'views'), // location of your subtemplates aka. header, footer etc
       defaultLayout: false,
     },
     viewPath: path.resolve(__dirname, 'views'),
-    extName: '.handlebars',
+    extName: '.hbs',
   };
-
   transporter.use('compile', hbs(options));
-  console.log(tempVar);
+
   // Step 3
   const mailOptions = {
     from: '"Querrix" <youremail@yourdomain.com>', // TODO: email sender
     to: Array.isArray(to) ? to.join() : to, // TODO: email receiver
     subject,
-    html,
+    template: temps,
+    context: vars,
   };
 
   // Step 4
