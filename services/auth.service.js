@@ -39,6 +39,7 @@ class AuthService {
     const {
       userId, signToken, phone, fullname, password,
     } = datas;
+
     const RToken = await Token.findOne({ userId });
     if (!RToken) throw new CustomError('Invalid or expired sign up link');
     const isValid = await bcrypt.compare(signToken, RToken.token);
