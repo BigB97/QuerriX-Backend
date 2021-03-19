@@ -39,7 +39,6 @@ class UserService {
   }
 
   async userPersona(users, data) {
-    console.log("Wooooos", users, data)
     const persona = new Persona({
       userId: users._id,
       firstname: data.firstname,
