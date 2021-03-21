@@ -12,21 +12,13 @@ const sendEmail = require('./mail.service');
 // const tokenModel = require('../models/token.model');
 class AuthService {
   async RequestSignupLink(email) {
-    let user = await User.findOne({ email });
+    const user = await User.findOne({ email });
     if (user) {
       throw new CustomError('Email already exist, signin or reset password');
     }
-
-    user = await new User({ email }).save();
-    const signToken = crypto.randomBytes(32).toString('hex');
-    const hash = await bcrypt.hash(signToken, 10);
-    await new Token({
-      userId: user._id,
-      token: hash,
-      createdAt: Date.now(),
-    }).save();
-
-    const link = `${process.env.BASE_URL}/api/auth/signup?userId=${user._id}&signToken=${signToken}`;
+    const link = `${
+      process.env.BASE_URL
+    }/api/auth/signup?email=${email}&isVerified=${true}`;
 
     // send mail
     await sendEmail(email, 'Signup link', 'signup', { link }, (err, data) => {
@@ -36,48 +28,38 @@ class AuthService {
   }
 
   async signup(datas) {
-    const {
-      userId, signToken, phone, fullname, password,
-    } = datas;
+    const {isVerified, phone, fullname, password, email } = datas;
+    console.log(datas);
 
-    const RToken = await Token.findOne({ userId });
-    if (!RToken) throw new CustomError('Invalid or expired sign up link');
-    const isValid = await bcrypt.compare(signToken, RToken.token);
-    if (!isValid) throw new CustomError('Invalid or expired sign up link');
     const hash = await bcrypt.hash(password, 10);
 
-    const user = await User.findByIdAndUpdate(
-      { _id: userId },
-      {
-        $set: {
-          password: hash,
-          phone,
-          fullname,
-          isVerified: true,
-        },
-      },
-      { new: true },
-    );
+    const user = new User({
+      password: hash,
+      phone,
+      email,
+      fullname,
+      isVerified,
+    });
+    console.log(user);
 
-    // Delete Registration Token
-    await RToken.deleteOne();
+    await user.save();
 
     // Send Welcome Mail
     await sendEmail(
-      user.email,
+      email,
       'Welcome',
       'welcome',
       { name: user.fullname },
       (err, data) => {
         if (err) return err;
         return data;
-      },
+      }
     );
 
     // Create Authentication Token
     const token = await JWT.sign(
       { id: user._id, role: user.role },
-      `${process.env.JWT_SECRET}`,
+      `${process.env.JWT_SECRET}`
     );
     // Resturn User data and Auth Token
     const returnData = {
@@ -108,7 +90,7 @@ class AuthService {
 
       `${process.env.JWT_SECRET}`,
 
-      { expiresIn: 60 * 60 },
+      { expiresIn: 60 * 60 }
     );
 
     const returnData = {
@@ -133,7 +115,7 @@ class AuthService {
     await User.updateOne(
       { _id: userId },
       { $set: { password: hash } },
-      { new: true },
+      { new: true }
     );
   }
 
@@ -164,7 +146,8 @@ class AuthService {
     const { userId, resetToken, password } = data;
 
     const RToken = await Token.findOne({ userId });
-    if (!RToken) throw new CustomError('Invalid or expired password reset token');
+    if (!RToken)
+      throw new CustomError('Invalid or expired password reset token');
     const isValid = await bcrypt.compare(resetToken, RToken.token);
 
     if (!isValid) {
@@ -174,7 +157,7 @@ class AuthService {
     await User.findByIdAndUpdate(
       { _id: userId },
       { $set: { password: hash } },
-      { new: true },
+      { new: true }
     );
 
     await RToken.deleteOne();
