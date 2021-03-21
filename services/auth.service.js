@@ -18,7 +18,7 @@ class AuthService {
     }
     const link = `${
       process.env.BASE_URL
-    }/api/auth/signup?email=${email}&isVerified=${true}`;
+    }/signup?email=${email}&isVerified=${true}`;
 
     // send mail
     await sendEmail(email, 'Signup link', 'signup', { link }, (err, data) => {
