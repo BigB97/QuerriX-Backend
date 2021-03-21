@@ -29,7 +29,6 @@ class AuthService {
 
   async signup(datas) {
     const {isVerified, phone, fullname, password, email } = datas;
-    console.log(datas);
 
     const hash = await bcrypt.hash(password, 10);
 
@@ -40,7 +39,6 @@ class AuthService {
       fullname,
       isVerified,
     });
-    console.log(user);
 
     await user.save();
 
