@@ -129,7 +129,7 @@ class AuthService {
       createdAt: Date.now(),
     }).save();
 
-    const link = `${process.env.BASE_URL}/reset-password?userId=${user._id}&resetToken=${resetToken}`;
+    const link = `${process.env.BASE_URL}/reset_password?userId=${user._id}&resetToken=${resetToken}`;
     // send mail
     await sendEmail(email, 'Reset Password', 'reset', { link }, (err, data) => {
       if (err) return err;
