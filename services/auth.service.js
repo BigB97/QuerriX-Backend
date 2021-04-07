@@ -16,9 +16,7 @@ class AuthService {
     if (user) {
       throw new CustomError('Email already exist, signin or reset password');
     }
-    const link = `${
-      process.env.BASE_URL
-    }/signup?email=${email}&isVerified=${true}`;
+    const link = `${process.env.BASE_URL}/signup?email=${email}&isVerified=${true}`;
 
     // send mail
     await sendEmail(email, 'Signup link', 'signup', { link }, (err, data) => {
@@ -29,9 +27,8 @@ class AuthService {
 
   async signup(datas) {
     const {isVerified, phone, fullname, password, email } = datas;
-
     const hash = await bcrypt.hash(password, 10);
-
+    
     const user = new User({
       password: hash,
       phone,
@@ -132,7 +129,7 @@ class AuthService {
       createdAt: Date.now(),
     }).save();
 
-    const link = `${process.env.BASE_URL}/api/auth/reset-password?userId=${user._id}&resetToken=${resetToken}`;
+    const link = `${process.env.BASE_URL}/reset-password?userId=${user._id}&resetToken=${resetToken}`;
     // send mail
     await sendEmail(email, 'Reset Password', 'reset', { link }, (err, data) => {
       if (err) return err;
