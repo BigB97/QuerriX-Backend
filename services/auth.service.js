@@ -11,6 +11,7 @@ const sendEmail = require('./mail.service');
 // const { JWT_SECRET, BCRYPT_SALT, CLIENT_URL } = process.env;
 // const tokenModel = require('../models/token.model');
 class AuthService {
+//   Request SignUp
   async RequestSignupLink(email) {
     const user = await User.findOne({ email });
     if (user) {
@@ -25,6 +26,7 @@ class AuthService {
     });
   }
 
+//   Register
   async signup(datas) {
     const {isVerified, phone, fullname, password, email } = datas;
     const hash = await bcrypt.hash(password, 10);
@@ -68,6 +70,7 @@ class AuthService {
     return returnData;
   }
 
+//   Login
   async signin(data) {
     if (!data.email) throw new CustomError('Email is required');
     if (!data.password) throw new CustomError('Password is required');
@@ -97,7 +100,7 @@ class AuthService {
     };
     return returnData;
   }
-
+// Update Password
   async updatePassword(userId, data) {
     const user = await User.findOne({ _id: userId });
     if (!user) throw new CustomError('User dose not exist');
@@ -114,6 +117,7 @@ class AuthService {
     );
   }
 
+//   Reset Password
   async RequestPasswordReset(email) {
     const user = await User.findOne({ email });
     if (!user) throw new CustomError('Email does not exist');
