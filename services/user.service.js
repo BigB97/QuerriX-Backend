@@ -54,6 +54,13 @@ class UserService {
       collected_feedback: data.collected_feedback,
       collected_feedback_platform: data.collected_feedback_platform,
     });
+    
+     await User.findByIdAndUpdate(
+      { _id: users._id},
+      { $set: { isUnboarding: true } },
+      { new: true }
+    );
+    
     return persona;
   }
 }
