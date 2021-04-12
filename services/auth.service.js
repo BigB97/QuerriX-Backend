@@ -85,9 +85,7 @@ class AuthService {
 
     const token = await JWT.sign(
       { id: user._id, role: user.role },
-
       `${process.env.JWT_SECRET}`,
-
       { expiresIn: 60 * 60 }
     );
 
@@ -96,6 +94,7 @@ class AuthService {
       email: user.email,
       role: user.role,
       verified: user.isVerified,
+      unboard: user.isUnboard,
       token,
     };
     return returnData;
