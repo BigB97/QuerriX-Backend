@@ -57,7 +57,7 @@ class UserService {
     
      await User.findByIdAndUpdate(
       { _id: users._id},
-      { $set: { isUnboarding: true } },
+      { $set: { isUnboard: true } },
       { new: true }
     );
     
