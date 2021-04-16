@@ -23,7 +23,7 @@ app.listen(PORT || 3000, async () => {
   // Initialize MongoDB
   MongoDB(MONGODB_URI);
   console.log(
-    `:::> Server listening on port ${PORT} @ http://localhost:${PORT}`,
+    `::> Server listening on port ${PORT} @ http://localhost:${PORT}`,
   );
 });
 
