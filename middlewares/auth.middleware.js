@@ -25,13 +25,13 @@ function auth(roles = []) {
     if (!user.isActive) {
       throw new CustomError(
         'Unauthorized access: User has been deactivated',
-        401
+        401,
       );
     }
     if (!user.isVerified) {
       throw new CustomError(
         'Unauthorized access: Please verify email address',
-        401
+        401,
       );
     }
     if (!roles.includes(user.role)) {
