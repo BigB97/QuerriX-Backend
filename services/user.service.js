@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-return-await */
 const User = require('../models/user.model');
@@ -24,7 +25,7 @@ class UserService {
     const user = await User.findByIdAndUpdate(
       { _id: userId },
       { $set: data },
-      { new: true }
+      { new: true },
     );
 
     if (!user) throw new CustomError("User dosen't exist", 404);
@@ -54,13 +55,13 @@ class UserService {
       collected_feedback: data.collected_feedback,
       collected_feedback_platform: data.collected_feedback_platform,
     });
-    
-     await User.findByIdAndUpdate(
-      { _id: users._id},
+
+    await User.findByIdAndUpdate(
+      { _id: users._id },
       { $set: { isUnboard: true } },
-      { new: true }
+      { new: true },
     );
-    
+
     return persona;
   }
 }
