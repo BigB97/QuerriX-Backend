@@ -1,4 +1,3 @@
-# QuerriX
 
 ## Installation
 
