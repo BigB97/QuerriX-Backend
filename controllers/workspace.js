@@ -34,7 +34,8 @@ exports.createFolder = async (req, res) => {
   try {
     const { folder } = req.body;
     const { workspace } = req.params;
-    console.log(folder, workspace)
+    console.log(req.body)
+    console.log(req.params)
     if (!mongoose.Types.ObjectId.isValid(workspace)) {
       throw CustomError('Invalid workspace id', 401);
     }
