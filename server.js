@@ -28,5 +28,5 @@ app.listen(PORT || 3000, async () => {
 });
 
 app.on('error', (error) => {
-  console.error(`<::: An error occiurred in our server: \n ${error}`);
+  console.error(`<::: An error occurred in our server: \n ${error}`);
 });
