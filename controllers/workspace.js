@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const Workspace = require('../models/workspace');
 const Folder = require('../models/folder');
 const CustomError = require('../utils/custom-error');
+const { compareSync } = require('bcryptjs');
 
 exports.createWorkspace = async (req, res) => {
   try {
@@ -41,7 +42,7 @@ exports.createFolder = async (req, res) => {
     if (!folder || folder.length < 1) {
       throw CustomError('Please provide the folder name', 400);
     }
-    const createFolder = await Folder.create({ folder, Workspace });
+    const createFolder = await Folder.create({ folder, workspace });
     if (!createFolder) {
       throw CustomError('An error occured', 500);
     }
