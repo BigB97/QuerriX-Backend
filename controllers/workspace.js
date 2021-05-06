@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const {
   BadRequest, NotFound, InternalServerError, Unauthorized,
 } = require('http-errors');
+
 const Workspace = require('../models/workspace');
 const Folder = require('../models/folder');
 const CustomError = require('../utils/custom-error');
@@ -15,7 +16,6 @@ exports.createWorkspace = async (req, res) => {
     if (!workspaceName) {
       throw CustomError('Workspace name is required', 400);
     }
-
     const workspace = await Workspace.create({
       workspaceName,
       owner,
@@ -49,6 +49,7 @@ exports.createFolder = async (req, res) => {
       throw CustomError('Please provide the folder name', 400);
     }
     const createFolder = await Folder.create({ folder, workspace });
+
     if (!createFolder) {
       throw CustomError('An error occured', 500);
     }

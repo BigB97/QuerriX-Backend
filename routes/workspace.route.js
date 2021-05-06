@@ -2,6 +2,7 @@ const express = require('express');
 const {
   createWorkspace, createFolder, updateWorkspace, getAllWorkspace, deleteWorkspace,
 } = require('../controllers/workspace');
+
 const auth = require('../middlewares/auth.middleware');
 
 const role = process.env;
