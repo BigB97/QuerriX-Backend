@@ -6,7 +6,7 @@ const role = process.env;
 
 const router = express.Router();
 
-router.post('/workspace', auth(role.ADMIN), createWorkspace);
+router.post('/', auth(role.ADMIN), createWorkspace);
 router.post('/:workspace/folder', auth(role.ADMIN), createFolder);
 
 module.exports = router;
