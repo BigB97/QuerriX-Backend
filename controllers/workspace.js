@@ -12,7 +12,7 @@ exports.createWorkspace = async (req, res) => {
   try {
     const { workspaceName } = req.body;
     const owner = req.user._id;
-
+console.log(workspaceName)
     if (!workspaceName) {
       throw CustomError('Workspace name is required', 400);
     }
@@ -30,6 +30,7 @@ exports.createWorkspace = async (req, res) => {
       data: workspace,
     });
   } catch (error) {
+console.log(error)
     return res.status(error.status || 400).json({
       status: false,
       message: error.message,
