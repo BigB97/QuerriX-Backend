@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const workspaceSchema = Schema({
-  workspaceName: { type: String, required: true },
+  workspaceName: { type: String, required: true, unique: true },
   owner: { type: Schema.Types.ObjectId, ref: 'users', required: true },
   dateCreated: { type: Date, default: Date.now },
 });
