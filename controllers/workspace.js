@@ -12,7 +12,10 @@ exports.createWorkspace = async (req, res) => {
   try {
     const { workspaceName } = req.body;
     const owner = req.user._id;
-console.log(workspaceName)
+    const findWorkspace = await Workspace.findOne({owner: req.user.id, workspaceName});
+    if (findWorkspace){
+      throw CustomError(`${workspaceName} Workspace already exist, create with another name`, 400);
+    }
     if (!workspaceName) {
       throw CustomError('Workspace name is required', 400);
     }
