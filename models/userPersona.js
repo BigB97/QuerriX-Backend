@@ -51,7 +51,7 @@ const personaSchema = new Schema(
       required: [true, 'Industry is required'],
     },
     industry_size: {
-      type: Number,
+      type: String,
       trim: true,
       required: [true, 'Industry size is required'],
     },
