@@ -1,7 +1,10 @@
 /* eslint-disable no-underscore-dangle */
 const mongoose = require('mongoose');
 const {
-  BadRequest, NotFound, InternalServerError, Unauthorized,
+  BadRequest,
+  NotFound,
+  InternalServerError,
+  Unauthorized,
 } = require('http-errors');
 
 const Workspace = require('../models/workspace');
@@ -12,9 +15,15 @@ exports.createWorkspace = async (req, res) => {
   try {
     const { workspaceName } = req.body;
     const owner = req.user._id;
-    const findWorkspace = await Workspace.findOne({owner: req.user.id, workspaceName});
-    if (findWorkspace){
-      throw CustomError(`${workspaceName} Workspace already exist, create with another name`, 400);
+    const findWorkspace = await Workspace.findOne({
+      owner: req.user.id,
+      workspaceName,
+    });
+    if (findWorkspace) {
+      throw CustomError(
+        `${workspaceName} Workspace already exist, create with another name`,
+        400,
+      );
     }
     if (!workspaceName) {
       throw CustomError('Workspace name is required', 400);
@@ -33,7 +42,6 @@ exports.createWorkspace = async (req, res) => {
       data: workspace,
     });
   } catch (error) {
-console.log(error)
     return res.status(error.status || 400).json({
       status: false,
       message: error.message,
@@ -92,7 +100,7 @@ exports.updateWorkspace = async (req, res) => {
       { $set: { workspaceName } },
     );
     if (!updateWorkspace) {
-      throw InternalServerError('Update operation wasn\'t succesful');
+      throw InternalServerError("Update operation wasn't succesful");
     }
 
     return res.status(200).json({
@@ -141,7 +149,9 @@ exports.deleteWorkspace = async (req, res) => {
       throw BadRequest('invalid workspace id');
     }
     // eslint-disable-next-line camelcase
-    const delete_workspace = await Workspace.findOneAndDelete({ owner: req.user._id });
+    const delete_workspace = await Workspace.findOneAndDelete({
+      owner: req.user._id,
+    });
     // eslint-disable-next-line camelcase
     if (!delete_workspace) {
       throw Unauthorized('Unable to delete this workspace');
