@@ -1,6 +1,6 @@
 /* eslint-disable func-names */
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
+// const bcrypt = require('bcryptjs');
 // const { BCRYPT_SALT } = require('../config');
 
 const { Schema } = mongoose;
