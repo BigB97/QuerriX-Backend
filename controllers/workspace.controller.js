@@ -7,9 +7,10 @@ const {
   Unauthorized,
 } = require('http-errors');
 
-const Workspace = require('../models/workspace');
+const Workspace = require('../models/workspace.model');
 const Folder = require('../models/folder');
 const CustomError = require('../utils/custom-error');
+const sendEmail = require('../services/mail.service');
 
 exports.createWorkspace = async (req, res) => {
   try {
@@ -102,7 +103,6 @@ exports.updateWorkspace = async (req, res) => {
     if (!updateWorkspace) {
       throw InternalServerError("Update operation wasn't succesful");
     }
-
     return res.status(200).json({
       status: true,
       message: 'Workspace updated successfully',
@@ -162,6 +162,37 @@ exports.deleteWorkspace = async (req, res) => {
       message: 'Workspace deleted succesfully',
       data: delete_workspace,
     });
+  } catch (error) {
+    return res.status(error.status || 400).json({
+      status: false,
+      message: error.message,
+    });
+  }
+};
+
+exports.inviteMember = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const member = await Workspace.findOne({ workspace_member: email });
+    console.log(member);
+    if (member) {
+      throw new CustomError('Member already invited, check the workspace team');
+    }
+    const link = `www.qurioux.com/invite/:${member._id}${email}`;
+    await sendEmail(
+      email,
+      'You have been invited ',
+      'invite',
+      {
+        link,
+        owner: member.owner.firstname,
+        workspaceName: member.workspaceName,
+      },
+      (err, data) => {
+        if (err) return err;
+        return data;
+      },
+    );
   } catch (error) {
     return res.status(error.status || 400).json({
       status: false,

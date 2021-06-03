@@ -2,7 +2,7 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-return-await */
 const User = require('../models/user.model');
-const Persona = require('../models/userPersona');
+const Persona = require('../models/userPersona.model');
 const CustomError = require('../utils/custom-error');
 
 class UserService {
@@ -25,7 +25,7 @@ class UserService {
     const user = await User.findByIdAndUpdate(
       { _id: userId },
       { $set: data },
-      { new: true },
+      { new: true }
     );
 
     if (!user) throw new CustomError("User dosen't exist", 404);
@@ -59,7 +59,7 @@ class UserService {
     await User.findByIdAndUpdate(
       { _id: users._id },
       { $set: { isUnboard: true } },
-      { new: true },
+      { new: true }
     );
 
     return persona;
