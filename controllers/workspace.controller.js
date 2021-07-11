@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /* eslint-disable no-underscore-dangle */
 const mongoose = require('mongoose');
 const {
@@ -7,31 +8,57 @@ const {
   Unauthorized,
 } = require('http-errors');
 
+const alphabcg = require('alphabcg');
+const cloudinary = require('cloudinary');
 const Workspace = require('../models/workspace.model');
 const Folder = require('../models/folder');
 const CustomError = require('../utils/custom-error');
 const sendEmail = require('../services/mail.service');
+// const { uploadFile, getFileStream } = require('../utils/s3');
 
+// creating workspace
 exports.createWorkspace = async (req, res) => {
   try {
+    // Get workspace name from paayload
     const { workspaceName } = req.body;
     const owner = req.user._id;
+    // Find Workspace name for conditions
     const findWorkspace = await Workspace.findOne({
       owner: req.user.id,
       workspaceName,
     });
+    // Check if workspace already exist
     if (findWorkspace) {
       throw CustomError(
         `${workspaceName} Workspace already exist, create with another name`,
-        400,
+        400
       );
     }
+    // check if workspace name is empty
     if (!workspaceName) {
       throw CustomError('Workspace name is required', 400);
     }
+
+    // options for workspace-image
+    const option = {
+      cloud_name: process.env.CLOUD_NAME,
+      api_key: process.env.API_KEY,
+      api_secret: process.env.API_SECRET,
+    };
+
+    // Create WorkSpaceImage from Workspacename
+    const workspace_image = await alphabcg(workspaceName, option);
+
+    // Create Worckspace name with image,brand-color,logo
     const workspace = await Workspace.create({
       workspaceName,
       owner,
+      workspace_image,
+      workspace_branding: {
+        primary: '#FFFFFF',
+        secondary: '#000000',
+        logo: workspace_image,
+      },
     });
 
     if (!workspace) {
@@ -43,24 +70,30 @@ exports.createWorkspace = async (req, res) => {
       data: workspace,
     });
   } catch (error) {
+    // return error message
     return res.status(error.status || 400).json({
       status: false,
       message: error.message,
     });
   }
 };
-
+// Creating folders in workspace
 exports.createFolder = async (req, res) => {
   try {
+    // receive folder name from request
     const { folder } = req.body;
+    // receive workspace id from payload
     const { workspace } = req.params;
 
+    // check if workspace id is valid
     if (!mongoose.Types.ObjectId.isValid(workspace)) {
       throw CustomError('Invalid workspace id', 401);
     }
+    // check if folder name is empty
     if (!folder || folder.length < 1) {
       throw CustomError('Please provide the folder name', 400);
     }
+    // create folder
     const createFolder = await Folder.create({ folder, workspace });
 
     if (!createFolder) {
@@ -78,10 +111,12 @@ exports.createFolder = async (req, res) => {
   }
 };
 
+// Update workspace
 exports.updateWorkspace = async (req, res) => {
   try {
     const { workspace } = req.params;
     const { workspaceName } = req.body;
+    const { file } = req;
 
     if (!mongoose.Types.ObjectId.isValid(workspace)) {
       throw BadRequest('invalid workspace id');
@@ -96,9 +131,18 @@ exports.updateWorkspace = async (req, res) => {
       throw NotFound('workspace not found');
     }
 
+    // upload to cloudinary and get generated link
+    const workspace_image = await cloudinary.uploader.upload(
+      file,
+      (error, result) => {
+        if (error) res.status(400).json({ error });
+        return result;
+      }
+    );
+
     const updateWorkspace = await Workspace.updateOne(
       { _id: workspace },
-      { $set: { workspaceName } },
+      { $set: { workspaceName }, workspace_image }
     );
     if (!updateWorkspace) {
       throw InternalServerError("Update operation wasn't succesful");
@@ -191,7 +235,7 @@ exports.inviteMember = async (req, res) => {
       (err, data) => {
         if (err) return err;
         return data;
-      },
+      }
     );
   } catch (error) {
     return res.status(error.status || 400).json({
