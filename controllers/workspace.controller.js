@@ -31,7 +31,7 @@ exports.createWorkspace = async (req, res) => {
     if (findWorkspace) {
       throw CustomError(
         `${workspaceName} Workspace already exist, create with another name`,
-        400
+        400,
       );
     }
     // check if workspace name is empty
@@ -137,12 +137,13 @@ exports.updateWorkspace = async (req, res) => {
       (error, result) => {
         if (error) res.status(400).json({ error });
         return result;
-      }
+      },
     );
-
+    console.log(workspace_image);
+    // update workspace
     const updateWorkspace = await Workspace.updateOne(
       { _id: workspace },
-      { $set: { workspaceName }, workspace_image }
+      { $set: { workspaceName, workspace_image } },
     );
     if (!updateWorkspace) {
       throw InternalServerError("Update operation wasn't succesful");
@@ -159,6 +160,7 @@ exports.updateWorkspace = async (req, res) => {
   }
 };
 
+// Get all workspace
 exports.getAllWorkspace = async (req, res) => {
   try {
     const getAll = await Workspace.find({ owner: req.user.id });
@@ -186,6 +188,7 @@ exports.getAllWorkspace = async (req, res) => {
   }
 };
 
+// Delete Workspace
 exports.deleteWorkspace = async (req, res) => {
   try {
     const { workspace } = req.params;
@@ -235,7 +238,7 @@ exports.inviteMember = async (req, res) => {
       (err, data) => {
         if (err) return err;
         return data;
-      }
+      },
     );
   } catch (error) {
     return res.status(error.status || 400).json({
