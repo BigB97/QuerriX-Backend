@@ -2,11 +2,20 @@
 require('dotenv').config();
 require('express-async-errors');
 const app = require('express')();
+const CloudinaryStorage = require('./utils/cloudinary');
+
 // Mongoose Database Setting
 const MongoDB = require('./config/mongo-db.config');
 
 const { PORT, MONGODB_URI } = process.env;
 
+const option = {
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET,
+};
+
+CloudinaryStorage(option);
 // Pre-route middlewares
 require('./middlewares/pre-route.middleware')(app);
 

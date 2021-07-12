@@ -10,6 +10,7 @@ const CustomError = require('../utils/custom-error');
 const sendEmail = require('./mail.service');
 // const { JWT_SECRET, BCRYPT_SALT, CLIENT_URL } = process.env;
 // const tokenModel = require('../models/token.model');
+
 class AuthService {
   //   Request SignUp
   async RequestSignupLink(email) {
@@ -136,6 +137,8 @@ class AuthService {
     }).save();
 
     const link = `${process.env.BASE_URL}/reset_password?userId=${user._id}&resetToken=${resetToken}`;
+
+    console.log(link);
     // send mail
     await sendEmail(email, 'Reset Password', 'reset', { link }, (err, data) => {
       if (err) return err;
