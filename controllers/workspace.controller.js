@@ -34,14 +34,14 @@ exports.createWorkspace = async (req, res) => {
     });
     // Check if workspace already exist
     if (findWorkspace) {
-      throw CustomError(
+      throw new CustomError(
         `${workspaceName} Workspace already exist, create with another name`,
         400
       );
     }
     // check if workspace name is empty
     if (!workspaceName) {
-      throw CustomError('Workspace name is required', 400);
+      throw new CustomError('Workspace name is required', 400);
     }
 
     // options for workspace-image
@@ -53,6 +53,7 @@ exports.createWorkspace = async (req, res) => {
 
     // Create WorkSpaceImage from Workspacename
     const workspace_image = await alphabcg(workspaceName, option);
+    console.log(workspace_image);
 
     // Create Worckspace name with image,brand-color,logo
     const workspace = await Workspace.create({
@@ -61,7 +62,10 @@ exports.createWorkspace = async (req, res) => {
       workspace_branding: {
         primary: '#FFFFFF',
         secondary: '#000000',
-        logo: { url: workspace_image },
+        logo: {
+          url: workspace_image.secure_url,
+          cloud_id: workspace_image.public_id,
+        },
       },
     });
 
@@ -91,17 +95,17 @@ exports.createFolder = async (req, res) => {
 
     // check if workspace id is valid
     if (!mongoose.Types.ObjectId.isValid(workspace)) {
-      throw CustomError('Invalid workspace id', 401);
+      throw new CustomError('Invalid workspace id', 401);
     }
     // check if folder name is empty
     if (!folder || folder.length < 1) {
-      throw CustomError('Please provide the folder name', 400);
+      throw new CustomError('Please provide the folder name', 400);
     }
     // create folder
     const createFolder = await Folder.create({ folder, workspace });
 
     if (!createFolder) {
-      throw CustomError('An error occured', 500);
+      throw new CustomError('An error occured', 500);
     }
     return res.status(201).json({
       status: true,
