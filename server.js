@@ -3,6 +3,7 @@ require('dotenv').config();
 require('express-async-errors');
 const app = require('express')();
 const CloudinaryStorage = require('./utils/cloudinary');
+
 // Mongoose Database Setting
 const MongoDB = require('./config/mongo-db.config');
 
@@ -22,9 +23,7 @@ require('./middlewares/pre-route.middleware')(app);
 app.use('/api', require('./routes'));
 
 // Ping route for testing connection
-app.get('/', (req, res) =>
-  res.status(200).send("Hello world!, We're changing the world")
-);
+app.get('/', (req, res) => res.status(200).send("Hello world!, We're changing the world"));
 
 // Error middlewares
 require('./middlewares/error.middleware')(app);
@@ -33,7 +32,7 @@ app.listen(PORT || 3000, async () => {
   // Initialize MongoDB
   MongoDB(MONGODB_URI);
   console.log(
-    `::> Server listening on port ${PORT} @ http://localhost:${PORT}`
+    `::> Server listening on port ${PORT} @ http://localhost:${PORT}`,
   );
 });
 

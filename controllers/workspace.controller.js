@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable camelcase */
 /* eslint-disable no-underscore-dangle */
 const mongoose = require('mongoose');
@@ -7,6 +8,10 @@ const {
   InternalServerError,
   Unauthorized,
 } = require('http-errors');
+const fs = require('fs');
+const { promisify } = require('util');
+
+const unlinkAsync = promisify(fs.unlink);
 
 const alphabcg = require('alphabcg');
 const cloudinary = require('cloudinary');
@@ -31,7 +36,7 @@ exports.createWorkspace = async (req, res) => {
     if (findWorkspace) {
       throw CustomError(
         `${workspaceName} Workspace already exist, create with another name`,
-        400,
+        400
       );
     }
     // check if workspace name is empty
@@ -53,11 +58,10 @@ exports.createWorkspace = async (req, res) => {
     const workspace = await Workspace.create({
       workspaceName,
       owner,
-      workspace_image,
       workspace_branding: {
         primary: '#FFFFFF',
         secondary: '#000000',
-        logo: workspace_image,
+        logo: { url: workspace_image },
       },
     });
 
@@ -114,45 +118,67 @@ exports.createFolder = async (req, res) => {
 // Update workspace
 exports.updateWorkspace = async (req, res) => {
   try {
+    // Get the workspace id,new name and new image
     const { workspace } = req.params;
     const { workspaceName } = req.body;
     const { file } = req;
 
+    // Check if the workpace id is ObjectId
     if (!mongoose.Types.ObjectId.isValid(workspace)) {
       throw BadRequest('invalid workspace id');
     }
-
+    // Check if the Workspace name is valid
     if (!workspaceName) {
       throw BadRequest('Workspace name is required');
     }
-
+    // Find the the workspace for conditions
     const findWorkspace = await Workspace.findOne({ owner: req.user._id });
+
+    // Check if the workspace is present in the DB
     if (!findWorkspace) {
       throw NotFound('workspace not found');
     }
 
     // upload to cloudinary and get generated link
-    const workspace_image = await cloudinary.uploader.upload(
-      file,
-      (error, result) => {
-        if (error) res.status(400).json({ error });
-        return result;
-      },
-    );
-    console.log(workspace_image);
+    const image = await cloudinary.uploader.upload(file.path);
+    console.log(image.secure_url);
+
+    // Check if payload comes with image
+    if (file) {
+      // Then search the workspace for prev imageurl and delete
+      const { cloud_id } = findWorkspace.workspace_branding.logo;
+      if (findWorkspace.workspace_branding.logo.cloudid) {
+        await cloudinary.uploader.destroy(cloud_id);
+      }
+    }
+
+    await unlinkAsync(req.file.path);
+
     // update workspace
     const updateWorkspace = await Workspace.updateOne(
       { _id: workspace },
-      { $set: { workspaceName, workspace_image } },
+      {
+        $set: {
+          workspaceName,
+          workspace_branding: {
+            logo: { url: image.secure_url, cloud_id: image.public_id },
+          },
+        },
+      }
     );
+    console.log(updateWorkspace);
     if (!updateWorkspace) {
       throw InternalServerError("Update operation wasn't succesful");
     }
+    // Delete the uploade file
+
+    // Return sucess message
     return res.status(200).json({
       status: true,
       message: 'Workspace updated successfully',
     });
   } catch (error) {
+    console.log(error);
     return res.status(error.status || 400).json({
       status: false,
       message: error.message,
@@ -238,7 +264,7 @@ exports.inviteMember = async (req, res) => {
       (err, data) => {
         if (err) return err;
         return data;
-      },
+      }
     );
   } catch (error) {
     return res.status(error.status || 400).json({
