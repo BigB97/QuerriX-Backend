@@ -17,7 +17,7 @@ const alphabcg = require('alphabcg');
 const cloudinary = require('cloudinary');
 const icongen = require('../utils/icon');
 const Workspace = require('../models/workspace.model');
-const Folder = require('../models/folder');
+const Folder = require('../models/folder.model');
 const CustomError = require('../utils/custom-error');
 const sendEmail = require('../services/mail.service');
 
@@ -225,6 +225,50 @@ exports.deleteWorkspace = async (req, res) => {
     return res.status(200).json({
       status: true,
       message: 'Workspace deleted succesfully',
+
+    });
+  } catch (error) {
+    return res.status(error.status || 400).json({
+      status: false,
+      message: error.message,
+    });
+  }
+};
+
+// Creating folders in workspace
+exports.createFolder = async (req, res) => {
+  try {
+    // receive folder name from request
+    const { folder } = req.body;
+    // receive workspace id from payload
+    const { workspace } = req.params;
+
+    // check if workspace id is valid
+    if (!mongoose.Types.ObjectId.isValid(workspace)) {
+      throw new CustomError('Invalid workspace id', 401);
+    }
+    // check if folder name is empty
+    if (!folder || folder.length < 1) {
+      throw new CustomError('Please provide the folder name', 400);
+    }
+
+    const icon = await icongen(folder);
+    // create folder
+    const createFolder = await Folder.create({
+      folder,
+      workspace,
+      folder_icon: {
+        url: icon.secure_url,
+        cloud_id: icon.public_id,
+      },
+    });
+
+    if (!createFolder) {
+      throw new CustomError('An error occured', 500);
+    }
+    return res.status(201).json({
+      status: true,
+      message: 'Folder created successfully',
     });
   } catch (error) {
     return res.status(error.status || 400).json({
