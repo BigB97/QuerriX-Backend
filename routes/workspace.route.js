@@ -20,6 +20,6 @@ router.post('/:workspace/folder', auth(role.ADMIN), createFolder);
 router.post('/:workspace/invite', auth(role.ADMIN), inviteMember);
 router.put('/update/:workspace', auth(role.ADMIN), upload('image'), updateWorkspace);
 router.get('/all', auth(role.ADMIN), getAllWorkspace);
-router.delete('/:workspace', auth(role.ADMIN), deleteWorkspace);
+router.delete('/delete/:workspace', auth(role.ADMIN), deleteWorkspace);
 
 module.exports = router;

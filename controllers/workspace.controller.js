@@ -124,7 +124,7 @@ exports.updateWorkspace = async (req, res) => {
   try {
     // Get the workspace id,new name and new image
     const { workspace } = req.params;
-    const { workspaceName } = req.body;
+    const { workspaceName, secondary, primary } = req.body;
     const { file } = req;
 
     // Check if the workpace id is ObjectId
@@ -143,20 +143,42 @@ exports.updateWorkspace = async (req, res) => {
       throw NotFound('workspace not found');
     }
 
-    // upload to cloudinary and get generated link
-    const image = await cloudinary.uploader.upload(file.path);
-    console.log(image.secure_url);
-
-    // Check if payload comes with image
-    if (file) {
-      // Then search the workspace for prev imageurl and delete
-      const { cloud_id } = findWorkspace.workspace_branding.logo;
-      if (findWorkspace.workspace_branding.logo.cloudid) {
-        await cloudinary.uploader.destroy(cloud_id);
+    // Check if file didn't come with payload
+    if (!file) {
+      // update workspace
+      const updateWorkspace = await Workspace.updateOne(
+        { _id: workspace },
+        {
+          $set: {
+            workspaceName,
+            workspace_branding: {
+              primary,
+              secondary,
+            },
+          },
+        }
+      );
+      if (!updateWorkspace) {
+        throw new InternalServerError("Update operation wasn't succesful");
       }
+
+      // Return sucess message
+      return res.status(200).json({
+        status: true,
+        message: 'Workspace updated successfully',
+      });
     }
 
+    // upload to cloudinary and get generated link
+    const image = await cloudinary.uploader.upload(file.path);
+
+    // Then search the workspace for prev imageurl and delete
+    const { cloud_id } = findWorkspace.workspace_branding.logo;
+    if (cloud_id) {
+      await cloudinary.uploader.destroy(cloud_id);
+    }
     await unlinkAsync(req.file.path);
+    // Delete the uploade file
 
     // update workspace
     const updateWorkspace = await Workspace.updateOne(
@@ -165,24 +187,23 @@ exports.updateWorkspace = async (req, res) => {
         $set: {
           workspaceName,
           workspace_branding: {
+            primary,
+            secondary,
             logo: { url: image.secure_url, cloud_id: image.public_id },
           },
         },
       }
     );
-    console.log(updateWorkspace);
+    // check if workspace was updated
     if (!updateWorkspace) {
-      throw InternalServerError("Update operation wasn't succesful");
+      throw new InternalServerError("Update operation wasn't succesful");
     }
-    // Delete the uploade file
-
     // Return sucess message
     return res.status(200).json({
       status: true,
       message: 'Workspace updated successfully',
     });
   } catch (error) {
-    console.log(error);
     return res.status(error.status || 400).json({
       status: false,
       message: error.message,
@@ -237,7 +258,6 @@ exports.deleteWorkspace = async (req, res) => {
     return res.status(200).json({
       status: true,
       message: 'Workspace deleted succesfully',
-      data: delete_workspace,
     });
   } catch (error) {
     return res.status(error.status || 400).json({
