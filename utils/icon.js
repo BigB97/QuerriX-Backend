@@ -1,9 +1,9 @@
 const jdenticon = require('jdenticon');
-const fs = require('fs');
+const uploadFromBuffer = require('./buffer_converter');
 
 const icongen = async (str) => {
-  const png = await jdenticon.toPng(str, 200);
-  return fs.writeFileSync('./uploads/icon.png', png);
+  const img = await jdenticon.toPng(str, 200);
+  return uploadFromBuffer(img, 'icons');
 };
 
 module.exports = icongen;
