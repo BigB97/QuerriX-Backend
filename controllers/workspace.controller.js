@@ -225,6 +225,7 @@ exports.deleteWorkspace = async (req, res) => {
     return res.status(200).json({
       status: true,
       message: 'Workspace deleted succesfully',
+
     });
   } catch (error) {
     return res.status(error.status || 400).json({
@@ -269,6 +270,51 @@ exports.createFolder = async (req, res) => {
       status: true,
       message: 'Folder created successfully',
     });
+  } catch (error) {
+    return res.status(error.status || 400).json({
+      status: false,
+      message: error.message,
+    });
+  }
+};
+
+// Creating folders in workspace
+exports.createFolder = async (req, res) => {
+  try {
+    // receive folder name from request
+    const { folder } = req.body;
+    // receive workspace id from payload
+    const { workspace } = req.params;
+
+    // check if workspace id is valid
+    if (!mongoose.Types.ObjectId.isValid(workspace)) {
+      throw new CustomError('Invalid workspace id', 401);
+    }
+    // check if folder name is empty
+    if (!folder || folder.length < 1) {
+      throw new CustomError('Please provide the folder name', 400);
+    }
+    const result = await icongen(folder);
+    console.log( result);
+    // // options for folder-image
+    // const option = {
+    //   cloud_name: process.env.CLOUD_NAME,
+    //   api_key: process.env.API_KEY,
+    //   api_secret: process.env.API_SECRET,
+    // };
+
+    // // Create WorkSpaceImage from Workspacename
+    // const folder_image = await alphabcg(folder, option);
+    // // create folder
+    // const createFolder = await Folder.create({ folder, workspace });
+
+    // if (!createFolder) {
+    //   throw new CustomError('An error occured', 500);
+    // }
+    // return res.status(201).json({
+    //   status: true,
+    //   message: 'Folder created successfully',
+    // });
   } catch (error) {
     return res.status(error.status || 400).json({
       status: false,

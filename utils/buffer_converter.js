@@ -1,3 +1,4 @@
+
 /* eslint-disable arrow-body-style */
 const cloudinary = require('cloudinary');
 const streamifier = require('streamifier');
@@ -17,6 +18,7 @@ const uploadFromBuffer = (Buffer, folder) => {
       },
     );
     streamifier.createReadStream(Buffer).pipe(uploadStream);
+
   });
 };
 
