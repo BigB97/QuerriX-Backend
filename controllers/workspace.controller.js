@@ -17,7 +17,7 @@ const alphabcg = require('alphabcg');
 const cloudinary = require('cloudinary');
 const icongen = require('../utils/icon');
 const Workspace = require('../models/workspace.model');
-const Folder = require('../models/folder');
+const Folder = require('../models/folder.model');
 const CustomError = require('../utils/custom-error');
 const sendEmail = require('../services/mail.service');
 
@@ -250,27 +250,25 @@ exports.createFolder = async (req, res) => {
     if (!folder || folder.length < 1) {
       throw new CustomError('Please provide the folder name', 400);
     }
-    const result = await icongen(folder);
-    console.log( result);
-    // // options for folder-image
-    // const option = {
-    //   cloud_name: process.env.CLOUD_NAME,
-    //   api_key: process.env.API_KEY,
-    //   api_secret: process.env.API_SECRET,
-    // };
 
-    // // Create WorkSpaceImage from Workspacename
-    // const folder_image = await alphabcg(folder, option);
-    // // create folder
-    // const createFolder = await Folder.create({ folder, workspace });
+    const icon = await icongen(folder);
+    // create folder
+    const createFolder = await Folder.create({
+      folder,
+      workspace,
+      folder_icon: {
+        url: icon.secure_url,
+        cloud_id: icon.public_id,
+      },
+    });
 
-    // if (!createFolder) {
-    //   throw new CustomError('An error occured', 500);
-    // }
-    // return res.status(201).json({
-    //   status: true,
-    //   message: 'Folder created successfully',
-    // });
+    if (!createFolder) {
+      throw new CustomError('An error occured', 500);
+    }
+    return res.status(201).json({
+      status: true,
+      message: 'Folder created successfully',
+    });
   } catch (error) {
     return res.status(error.status || 400).json({
       status: false,

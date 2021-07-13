@@ -1,11 +1,12 @@
+/* eslint-disable arrow-body-style */
 const cloudinary = require('cloudinary');
 const streamifier = require('streamifier');
 
-let uploadFromBuffer = (Buffer) => {
+const uploadFromBuffer = (Buffer, folder) => {
   return new Promise((resolve, reject) => {
-    let cld_upload_stream = cloudinary.v2.uploader.upload_stream(
+    const uploadStream = cloudinary.v2.uploader.upload_stream(
       {
-        folder: 'foo',
+        folder,
       },
       (error, result) => {
         if (result) {
@@ -13,9 +14,9 @@ let uploadFromBuffer = (Buffer) => {
         } else {
           reject(error);
         }
-      }
+      },
     );
-    streamifier.createReadStream(Buffer).pipe(cld_upload_stream);
+    streamifier.createReadStream(Buffer).pipe(uploadStream);
   });
 };
 
