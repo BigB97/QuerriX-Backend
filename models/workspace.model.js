@@ -3,8 +3,8 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const workspaceSchema = Schema({
-  workspaceName: { type: String, required: true, unique: true },
-  workspace_member: { type: Array, unique: true },
+  workspaceName: { type: String, required: true },
+  workspace_member: { type: Array },
   workspace_branding: {
     primary: { type: String },
     secondary: { type: String },

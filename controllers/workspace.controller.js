@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 /* eslint-disable consistent-return */
 /* eslint-disable no-console */
 /* eslint-disable camelcase */
@@ -91,61 +92,34 @@ exports.updateWorkspace = async (req, res) => {
   try {
     // Get the workspace id,new name and new image
     const { workspace } = req.params;
-    const { workspaceName, secondary, primary } = req.body;
-    const { file } = req;
+    const { workspaceName, secondary, primary, url } = req.body;
 
     // Check if the workpace id is ObjectId
     if (!mongoose.Types.ObjectId.isValid(workspace)) {
-      throw BadRequest('invalid workspace id');
+      throw new BadRequest('invalid workspace id');
     }
     // Check if the Workspace name is valid
     if (!workspaceName) {
-      throw BadRequest('Workspace name is required');
+      throw new BadRequest('Workspace name is required');
     }
     // Find the the workspace for conditions
     const findWorkspace = await Workspace.findOne({ owner: req.user._id });
 
+    // Check if the Workspace name is exist
+    if (findWorkspace.workspaceName === workspaceName) {
+      throw new BadRequest('Workspace name already exist, change name');
+    }
+
     // Check if the workspace is present in the DB
     if (!findWorkspace) {
-      throw NotFound('workspace not found');
+      throw new NotFound('workspace not found');
     }
-
-    // Check if file didn't come with payload
-    if (!file) {
-      // update workspace
-      const updateWorkspace = await Workspace.updateOne(
-        { _id: workspace },
-        {
-          $set: {
-            workspaceName,
-            workspace_branding: {
-              primary,
-              secondary,
-            },
-          },
-        }
-      );
-      if (!updateWorkspace) {
-        throw new InternalServerError("Update operation wasn't succesful");
-      }
-
-      // Return sucess message
-      return res.status(200).json({
-        status: true,
-        message: 'Workspace updated successfully',
-      });
-    }
-
-    // upload to cloudinary and get generated link
-    const image = await cloudinary.uploader.upload(file.path);
 
     // Then search the workspace for prev imageurl and delete
     const { cloud_id } = findWorkspace.workspace_branding.logo;
     if (cloud_id) {
       await cloudinary.uploader.destroy(cloud_id);
     }
-    await unlinkAsync(req.file.path);
-    // Delete the uploade file
 
     // update workspace
     const updateWorkspace = await Workspace.updateOne(
@@ -156,7 +130,7 @@ exports.updateWorkspace = async (req, res) => {
           workspace_branding: {
             primary,
             secondary,
-            logo: { url: image.secure_url, cloud_id: image.public_id },
+            logo: { url },
           },
         },
       }
@@ -329,7 +303,7 @@ exports.updateFolder = async (req, res) => {
 
     // Check if the workspace is present in the DB
     if (!findFolder) {
-      throw NotFound('workspace not found');
+      throw NotFound('Folder not found');
     }
 
     // Check if file didn't come with payload
