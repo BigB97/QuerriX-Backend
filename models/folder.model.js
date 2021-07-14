@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const folderSchema = Schema({
-  folder: { type: String, required: true },
+  folderName: { type: String, required: true },
   folder_icon: {
     url: { type: String },
     cloud_id: { type: String },
