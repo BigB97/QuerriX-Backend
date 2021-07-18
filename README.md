@@ -1,7 +1,7 @@
 
 ## Installation
 
-1. Install dependencies -- `npm install`
+1. Install dependencies --- `npm install`
 
 2. Create a new file `.env` if it doesn't exist and copy the contents of `env.dev` into it to be able to run your server on production environment. 
 
@@ -29,3 +29,4 @@
 | [GET] &nbsp; /api/users/:userId                                  | Get a user                               | User                                  
 | [UPDATE] &nbsp; /api/users/::userId                              | Update a user                            | User                                  
 | [DELETE] &nbsp; /api/users/:userId                               | Delete a user                            | Admin                                 
+|
