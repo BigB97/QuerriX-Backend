@@ -9,6 +9,7 @@ const {
 const cloudinary = require('cloudinary');
 const icongen = require('../utils/icon');
 const Folder = require('../models/folder.model');
+const Workspace = require('../models/workspace.model');
 const CustomError = require('../utils/custom-error');
 
 // Creating folders in workspace
@@ -59,7 +60,7 @@ exports.updateFolder = async (req, res) => {
   try {
     // Get the workspace id,new name and new image
     const { folderid } = req.params;
-    const { folderName, secondary, primary, url } = req.body;
+    const { folderName, url } = req.body;
 
     // Check if the workpace id is ObjectId
     if (!mongoose.Types.ObjectId.isValid(folderid)) {
@@ -106,6 +107,64 @@ exports.updateFolder = async (req, res) => {
     return res.status(200).json({
       status: true,
       message: 'Folder updated successfully',
+    });
+  } catch (error) {
+    return res.status(error.status || 400).json({
+      status: false,
+      message: error.message,
+    });
+  }
+};
+
+// Get all Folder
+exports.getAllFolder = async (req, res) => {
+  try {
+    const { workspaceid } = req.params;
+    const getAll = await Folder.find({ workspace: workspaceid });
+    if (!getAll) {
+      throw new BadRequest('Unable to get folder');
+    }
+    if (getAll.length < 1) {
+      return res.status(200).json({
+        status: true,
+        message: 'You dont have any folder in this workspace',
+        data: [],
+      });
+    }
+
+    return res.status(200).json({
+      status: true,
+      message: 'Folder fetched succesfully',
+      data: getAll,
+    });
+  } catch (error) {
+    return res.status(error.status || 400).json({
+      status: false,
+      message: error.message,
+    });
+  }
+};
+
+// Delete Folder
+exports.deleteFolder = async (req, res) => {
+  try {
+    const { folderid } = req.params;
+    console.log(folderid);
+    if (!mongoose.Types.ObjectId.isValid(folderid)) {
+      throw new BadRequest('invalid folder id');
+    }
+    // eslint-disable-next-line camelcase
+    const delete_folder = await Folder.findOneAndDelete({
+      _id: folderid,
+    });
+    // eslint-disable-next-line camelcase
+    if (!delete_folder) {
+      throw new Unauthorized('Unable to delete this folder');
+    }
+
+    return res.status(200).json({
+      status: true,
+      message: 'Folder deleted succesfully',
     });
   } catch (error) {
     return res.status(error.status || 400).json({

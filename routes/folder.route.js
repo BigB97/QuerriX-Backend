@@ -6,16 +6,20 @@ const {
   deleteFolder,
 } = require('../controllers/folder.controller');
 
+const router = express.Router();
 const upload = require('../middlewares/multer.middleware');
 const auth = require('../middlewares/auth.middleware');
 
 const role = process.env;
 
-const router = express.Router();
-
 router.post('/:workspace/create', auth(role.ADMIN), createFolder);
-router.put('/update/:folderid', auth(role.ADMIN), upload('image'), updateFolder);
-// router.get('/all', auth(role.ADMIN), getAllWorkspace);
-// router.delete('/delete/:workspace', auth(role.ADMIN), deleteWorkspace);
+router.put(
+  '/update/:folderid',
+  auth(role.ADMIN),
+  upload('image'),
+  updateFolder
+);
+router.get('/all/:workspaceid', auth(role.ADMIN), getAllFolder);
+router.delete('/delete/:folderid', auth(role.ADMIN), deleteFolder);
 
 module.exports = router;

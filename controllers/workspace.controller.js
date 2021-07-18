@@ -10,15 +10,9 @@ const {
   InternalServerError,
   Unauthorized,
 } = require('http-errors');
-const fs = require('fs');
-const { promisify } = require('util');
-
-const unlinkAsync = promisify(fs.unlink);
 const alphabcg = require('alphabcg');
 const cloudinary = require('cloudinary');
-const icongen = require('../utils/icon');
 const Workspace = require('../models/workspace.model');
-const Folder = require('../models/folder.model');
 const CustomError = require('../utils/custom-error');
 const sendEmail = require('../services/mail.service');
 
@@ -39,7 +33,7 @@ exports.createWorkspace = async (req, res) => {
     if (findWorkspace) {
       throw new CustomError(
         `${workspaceName} Workspace already exist, create with another name`,
-        400
+        400,
       );
     }
     // check if workspace name is empty
@@ -92,7 +86,9 @@ exports.updateWorkspace = async (req, res) => {
   try {
     // Get the workspace id,new name and new image
     const { workspace } = req.params;
-    const { workspaceName, secondary, primary, url } = req.body;
+    const {
+      workspaceName, secondary, primary, url,
+    } = req.body;
 
     // Check if the workpace id is ObjectId
     if (!mongoose.Types.ObjectId.isValid(workspace)) {
@@ -133,7 +129,7 @@ exports.updateWorkspace = async (req, res) => {
             logo: { url },
           },
         },
-      }
+      },
     );
     // check if workspace was updated
     if (!updateWorkspace) {
@@ -157,7 +153,7 @@ exports.getAllWorkspace = async (req, res) => {
   try {
     const getAll = await Workspace.find({ owner: req.user.id });
     if (!getAll) {
-      throw BadRequest('Unable to get workspaces');
+      throw new BadRequest('Unable to get workspaces');
     }
     if (getAll.length < 1) {
       return res.status(200).json({
@@ -185,7 +181,7 @@ exports.deleteWorkspace = async (req, res) => {
   try {
     const { workspace } = req.params;
     if (!mongoose.Types.ObjectId.isValid(workspace)) {
-      throw BadRequest('invalid workspace id');
+      throw new BadRequest('invalid workspace id');
     }
     // eslint-disable-next-line camelcase
     const delete_workspace = await Workspace.findOneAndDelete({
@@ -193,55 +189,12 @@ exports.deleteWorkspace = async (req, res) => {
     });
     // eslint-disable-next-line camelcase
     if (!delete_workspace) {
-      throw Unauthorized('Unable to delete this workspace');
+      throw new Unauthorized('Unable to delete this workspace');
     }
 
     return res.status(200).json({
       status: true,
       message: 'Workspace deleted succesfully',
-    });
-  } catch (error) {
-    return res.status(error.status || 400).json({
-      status: false,
-      message: error.message,
-    });
-  }
-};
-
-// Creating folders in workspace
-exports.createFolder = async (req, res) => {
-  try {
-    // receive folder name from request
-    const { folder } = req.body;
-    // receive workspace id from payload
-    const { workspace } = req.params;
-
-    // check if workspace id is valid
-    if (!mongoose.Types.ObjectId.isValid(workspace)) {
-      throw new CustomError('Invalid workspace id', 401);
-    }
-    // check if folder name is empty
-    if (!folder || folder.length < 1) {
-      throw new CustomError('Please provide the folder name', 400);
-    }
-
-    const icon = await icongen(folder);
-    // create folder
-    const createFolder = await Folder.create({
-      folder,
-      workspace,
-      folder_icon: {
-        url: icon.secure_url,
-        cloud_id: icon.public_id,
-      },
-    });
-
-    if (!createFolder) {
-      throw new CustomError('An error occured', 500);
-    }
-    return res.status(201).json({
-      status: true,
-      message: 'Folder created successfully',
     });
   } catch (error) {
     return res.status(error.status || 400).json({
@@ -272,100 +225,8 @@ exports.inviteMember = async (req, res) => {
       (err, data) => {
         if (err) return err;
         return data;
-      }
+      },
     );
-  } catch (error) {
-    return res.status(error.status || 400).json({
-      status: false,
-      message: error.message,
-    });
-  }
-};
-
-// Update workspace
-exports.updateFolder = async (req, res) => {
-  try {
-    // Get the workspace id,new name and new image
-    const { folder } = req.params;
-    const { folderName } = req.body;
-    const { file } = req;
-
-    // Check if the workpace id is ObjectId
-    if (!mongoose.Types.ObjectId.isValid(folder)) {
-      throw BadRequest('invalid workspace id');
-    }
-    // Check if the Workspace name is valid
-    if (!folderName) {
-      throw BadRequest('Workspace name is required');
-    }
-    // Find the the folder for conditions
-    const findFolder = await Folder.findOne({ _id: folder });
-
-    // Check if the workspace is present in the DB
-    if (!findFolder) {
-      throw NotFound('Folder not found');
-    }
-
-    // Check if file didn't come with payload
-    if (!file) {
-      // update workspace
-      const updateWorkspace = await Workspace.updateOne(
-        { _id: workspace },
-        {
-          $set: {
-            workspaceName,
-            workspace_branding: {
-              primary,
-              secondary,
-            },
-          },
-        }
-      );
-      if (!updateWorkspace) {
-        throw new InternalServerError("Update operation wasn't succesful");
-      }
-
-      // Return sucess message
-      return res.status(200).json({
-        status: true,
-        message: 'Workspace updated successfully',
-      });
-    }
-
-    // upload to cloudinary and get generated link
-    const image = await cloudinary.uploader.upload(file.path);
-
-    // Then search the workspace for prev imageurl and delete
-    const { cloud_id } = findWorkspace.workspace_branding.logo;
-    if (cloud_id) {
-      await cloudinary.uploader.destroy(cloud_id);
-    }
-    await unlinkAsync(req.file.path);
-    // Delete the uploade file
-
-    // update workspace
-    const updateWorkspace = await Workspace.updateOne(
-      { _id: workspace },
-      {
-        $set: {
-          workspaceName,
-          workspace_branding: {
-            primary,
-            secondary,
-            logo: { url: image.secure_url, cloud_id: image.public_id },
-          },
-        },
-      }
-    );
-    // check if workspace was updated
-    if (!updateWorkspace) {
-      throw new InternalServerError("Update operation wasn't succesful");
-    }
-    // Return sucess message
-    return res.status(200).json({
-      status: true,
-      message: 'Workspace updated successfully',
-    });
   } catch (error) {
     return res.status(error.status || 400).json({
       status: false,
