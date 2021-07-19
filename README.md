@@ -15,7 +15,7 @@
 2. Server should be running on http://localhost:4000/ by default
 
 
-## Routes
+## Routess
 
 | -----------------------------------------------------------------|----------------------------------------- | -------------------------------------
 | [POST] &nbsp; /api/auth/sign-up                                  | Create a new account                     | none                                     
