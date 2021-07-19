@@ -15,7 +15,7 @@ const role = process.env;
 const router = express.Router();
 
 router.post('/create', auth(role.USER), createWorkspace);
-router.post('/:workspace/invite', auth(role.ADMIN), inviteMember);
+router.post('/:workspaceid/invite', auth(role.ADMIN), inviteMember);
 router.put(
   '/update/:workspace',
   auth(role.ADMIN),

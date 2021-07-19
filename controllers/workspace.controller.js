@@ -207,7 +207,11 @@ exports.deleteWorkspace = async (req, res) => {
 exports.inviteMember = async (req, res) => {
   try {
     const { email } = req.body;
-    const member = await Workspace.findOne({ workspace_member: email });
+    const { workspaceid } = req.params;
+    const member = await Workspace.findOne({
+      workspaceid,
+      workspace_member: email,
+    });
     console.log(member);
     if (member) {
       throw new CustomError('Member already invited, check the workspace team');
