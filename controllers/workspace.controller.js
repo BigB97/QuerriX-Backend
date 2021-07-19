@@ -33,7 +33,7 @@ exports.createWorkspace = async (req, res) => {
     if (findWorkspace) {
       throw new CustomError(
         `${workspaceName} Workspace already exist, create with another name`,
-        400
+        400,
       );
     }
     // check if workspace name is empty
@@ -86,7 +86,9 @@ exports.updateWorkspace = async (req, res) => {
   try {
     // Get the workspace id,new name and new image
     const { workspace } = req.params;
-    const { workspaceName, secondary, primary, url } = req.body;
+    const {
+      workspaceName, secondary, primary, url,
+    } = req.body;
 
     // Check if the workpace id is ObjectId
     if (!mongoose.Types.ObjectId.isValid(workspace)) {
@@ -127,7 +129,7 @@ exports.updateWorkspace = async (req, res) => {
             logo: { url },
           },
         },
-      }
+      },
     );
     // check if workspace was updated
     if (!updateWorkspace) {
@@ -227,7 +229,7 @@ exports.inviteMember = async (req, res) => {
       (err, data) => {
         if (err) return err;
         return data;
-      }
+      },
     );
   } catch (error) {
     return res.status(error.status || 400).json({
