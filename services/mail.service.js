@@ -3,8 +3,6 @@ const mailGun = require('nodemailer-mailgun-transport');
 const hbs = require('nodemailer-express-handlebars');
 const path = require('path');
 
-const CustomError = require('../utils/custom-error');
-
 // EmailService
 
 const sendEmail = async (to, subject, temps, vars) => {
@@ -40,12 +38,13 @@ const sendEmail = async (to, subject, temps, vars) => {
   };
 
   // Step 4
-  transporter.sendMail(mailOptions, (err, data) => {
+  return transporter.sendMail(mailOptions, (err, data) => {
     if (err) {
       console.log('Error', err);
-      throw new CustomError('Email Error', err);
+      return err;
     }
     console.log('Sucess', data);
+    return data;
   });
 };
 

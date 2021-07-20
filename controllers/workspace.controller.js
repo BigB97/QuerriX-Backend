@@ -206,29 +206,35 @@ exports.inviteMember = async (req, res) => {
   try {
     const { email } = req.body;
     const { workspaceid } = req.params;
-    const member = await Workspace.findOne({
-      workspaceid,
-      workspace_member: email,
-    });
-    console.log(member);
-    if (member) {
-      throw new CustomError('Member already invited, check the workspace team');
+    console.log(email);
+    const workspace = await Workspace.findOne({ _id: workspaceid });
+    if (!workspace) {
+      throw new CustomError('Workspace is not valid');
     }
-    const link = `www.qurioux.com/invite/:${member._id}${email}`;
-    await sendEmail(
-      email,
-      'You have been invited ',
-      'invite',
-      {
-        link,
-        owner: member.owner.firstname,
-        workspaceName: member.workspaceName,
-      },
-      (err, data) => {
-        if (err) return err;
-        return data;
-      }
-    );
+    const inviteEmail = await email.map(async (emails) => {
+      const link = `${process.env.BASE_URL}/invite?workspaceid=${workspace._id}?email=${emails}`;
+      console.log(link);
+      await sendEmail(
+        emails,
+        'You have been invited ',
+        'invite',
+        {
+          link,
+          owner: workspace.owner.firstname,
+          workspaceName: workspace.workspaceName,
+        },
+        (err, data) => {
+          if (err) throw new CustomError('Workspace is not valid');
+          return res.status(200).json({
+            status: true,
+            message: 'Invitation sent',
+            data,
+          });
+        }
+      );
+    });
+    console.log(inviteEmail);
+    if (!inviteEmail) throw new CustomError('Not sent ');
   } catch (error) {
     return res.status(error.status || 400).json({
       status: false,

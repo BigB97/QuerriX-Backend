@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 
 const workspaceSchema = Schema({
   workspaceName: { type: String, required: true },
-  workspace_member: { type: Array },
+  workspace_member: [String],
   workspace_branding: {
     primary: { type: String },
     secondary: { type: String },
