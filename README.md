@@ -12,7 +12,7 @@
 
 1. Start up the server - Run `npm start` | `npm run dev`
 
-2. Server should be running on http://localhost:3000/ by default
+2. Server should be running on http://localhost:4000/ by default
 
 
 ## Routes
