@@ -1,4 +1,3 @@
-
 ## Installation
 
 1. Install dependencies --- `npm install`
@@ -29,4 +28,3 @@
 | [GET] &nbsp; /api/users/:userId                                  | Get a user                               |                             
 | [UPDATE] &nbsp; /api/users/::userId                              | Update a user                            | User                                  
 | [DELETE] &nbsp; /api/users/:userId                               | Delete a user                            | Admin                                 
-|
