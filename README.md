@@ -24,7 +24,7 @@
 | [POST] &nbsp; /api/auth/verify-email                             | Email verification                       | none                                     
 | [POST] &nbsp; /api/auth/request-password-reset                   | Sends a request password email           | none                                      
 | [POST] &nbsp; /api/auth/reset-password                           | Reset password form handler              | none                                      
-| [POST] &nbsp; /api/users                                         | Create a user                            | User                                  
+| [POST] &nbsp; /api/users                                         | Create a user                            |                                  
 | [GET] &nbsp; /api/users                                          | Get all users                            | Admin                                 
 | [GET] &nbsp; /api/users/:userId                                  | Get a user                               | User                                  
 | [UPDATE] &nbsp; /api/users/::userId                              | Update a user                            | User                                  
