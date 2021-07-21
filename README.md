@@ -26,7 +26,7 @@
 | [POST] &nbsp; /api/auth/reset-password                           | Reset password form handler              | none                                      
 | [POST] &nbsp; /api/users                                         | Create a user                            |                                  
 | [GET] &nbsp; /api/users                                          | Get all users                            | Admin                                 
-| [GET] &nbsp; /api/users/:userId                                  | Get a user                               | User                                  
+| [GET] &nbsp; /api/users/:userId                                  | Get a user                               |                             
 | [UPDATE] &nbsp; /api/users/::userId                              | Update a user                            | User                                  
 | [DELETE] &nbsp; /api/users/:userId                               | Delete a user                            | Admin                                 
 |
