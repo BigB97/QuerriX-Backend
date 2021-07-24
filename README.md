@@ -16,7 +16,7 @@
 
 ## Routes
 
-| -----------------------------------------------------------------|----------------------------------------- | -------------------------------------
+| -----------------------------------------------------------------|----------------------------------------- | ----------------------------------
 | [POST] &nbsp; /api/auth/sign-up                                  | Create a new account                     | none                                     
 | [POST] &nbsp; /api/auth/sign-in                                  | User sign in                             | none                                      
 | [POST] &nbsp; /api/auth/request-email-verification               | Resend verfication email                 | none                                     
