@@ -7,7 +7,7 @@
 3. Then you need to provide values for the configuration env files at the `src/config/env directory`.
 
 
-## Running the server locally
+## Running the server locally. 
 
 1. Start up the server - Run `npm start` | `npm run dev`
 
